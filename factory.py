@@ -19,22 +19,15 @@
 # Free Software Foundation, Inc.,
 # 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.  
 
-import ibus
+import gi
+gi.require_version('IBus', '1.0')
+from gi.repository import IBus
 import engine
 
 
-class EngineFactory(ibus.EngineFactoryBase):
+class EngineFactory:
     def __init__(self, bus):
         self.__bus = bus
-        super(EngineFactory, self).__init__(self.__bus)
-
-        self.__id = 0
-
-    def create_engine(self, engine_name):
-        print engine_name
-        if engine_name == "googlepinyin":
-            self.__id += 1
-            return engine.Engine(self.__bus, "%s/%d" % ("/org/freedesktop/IBus/GooglePinyin/Engine", self.__id))
-
-        return super(EngineFactory, self).create_engine(engine_name)
+        self.__factory = IBus.Factory.new(bus.get_connection())
+        self.__factory.add_engine("googlepinyin", engine.Engine)
 

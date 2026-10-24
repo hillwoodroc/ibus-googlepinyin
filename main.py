@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # vim:set et sts=4 sw=4:
 #
 # ibus-googlepinyin - The GooglePinyin engine for IBus
@@ -23,32 +23,28 @@
 import os
 import sys
 import getopt
-import ibus
-import gobject
+import gi
+gi.require_version('IBus', '1.0')
+from gi.repository import GLib, IBus
 import factory
 
 class IMApp:
     def __init__(self, exec_by_ibus):
-        self.__component = ibus.Component("org.freedesktop.IBus.GooglePinyin",
-                                          "GooglePinyin Component",
-                                          "0.1.2",
-                                          "GPL",
-                                          "Jiahua Huang <jhuangjiahua@gmail.com>")
-        self.__component.add_engine("googlepinyin",
-                                    "googlepinyin",
-                                    "GooglePinyin",
-                                    "zh_CN",
-                                    "GPL",
-                                    "Jiahu Huang <jhuangjiahua@gmail.com>",
-                                    "",
-                                    "en")
-        self.__mainloop = gobject.MainLoop()
-        self.__bus = ibus.Bus()
+        self.__mainloop = GLib.MainLoop()
+        self.__bus = IBus.Bus.new()
         self.__bus.connect("destroy", self.__bus_destroy_cb)
         self.__factory = factory.EngineFactory(self.__bus)
         if exec_by_ibus:
             self.__bus.request_name("org.freedesktop.IBus.GooglePinyin", 0)
         else:
+            self.__component = IBus.Component.new(
+                "org.freedesktop.IBus.GooglePinyin", "GooglePinyin Component",
+                "0.1.2", "GPL", "Jiahua Huang <jhuangjiahua@gmail.com>",
+                "", "en")
+            self.__component.add_engine(IBus.EngineDesc.new(
+                "googlepinyin", "GooglePinyin", "GooglePinyin Input Method",
+                "zh_CN", "GPL", "Jiahua Huang <jhuangjiahua@gmail.com>",
+                os.path.join(os.path.dirname(__file__), "icons", "ibus-googlepinyin.png"), "us"))
             self.__bus.register_component(self.__component)
 
     def run(self):
@@ -62,9 +58,9 @@ def launch_engine(exec_by_ibus):
     IMApp(exec_by_ibus).run()
 
 def print_help(out, v = 0):
-    print >> out, "-i, --ibus             execute by ibus."
-    print >> out, "-h, --help             show this message."
-    print >> out, "-d, --daemonize        daemonize ibus"
+    print("-i, --ibus             execute by ibus.", file=out)
+    print("-h, --help             show this message.", file=out)
+    print("-d, --daemonize        daemonize ibus", file=out)
     sys.exit(v)
 
 def main():
@@ -74,7 +70,7 @@ def main():
     longopt = ["help", "daemonize", "ibus"]
     try:
         opts, args = getopt.getopt(sys.argv[1:], shortopt, longopt)
-    except getopt.GetoptError, err:
+    except getopt.GetoptError as err:
         print_help(sys.stderr, 1)
 
     for o, a in opts:
@@ -85,7 +81,7 @@ def main():
         elif o in ("-i", "--ibus"):
             exec_by_ibus = True
         else:
-            print >> sys.stderr, "Unknown argument: %s" % o
+            print("Unknown argument: %s" % o, file=sys.stderr)
             print_help(sys.stderr, 1)
 
     if daemonize:

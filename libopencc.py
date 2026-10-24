@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:
 '''wrapper of libopencc
@@ -16,15 +16,23 @@ import sys
 
 libc = ctypes.CDLL(ctypes.util.find_library('c'))
 opencc = ctypes.CDLL(ctypes.util.find_library('opencc'))
-od = opencc.opencc_open('zhs2zht.ini')
+opencc.opencc_open.argtypes = [ctypes.c_char_p]
+opencc.opencc_open.restype = ctypes.c_void_p
+opencc.opencc_convert_utf8.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_int]
+opencc.opencc_convert_utf8.restype = ctypes.c_void_p
+libc.free.argtypes = [ctypes.c_void_p]
+od = opencc.opencc_open(b'zhs2zht.ini')
 
 def convert(text):
     '''convert simplified chinese to traditional chinese
     '''
-    ret = ctypes.c_char_p(opencc.opencc_convert_utf8(od, text, -1))
-    stri = ret.value
-    libc.free(ret)
-    return stri
+    if isinstance(text, str):
+        text = text.encode('utf8')
+    ret = opencc.opencc_convert_utf8(od, text, -1)
+    try:
+        return ctypes.string_at(ret).decode('utf8')
+    finally:
+        libc.free(ret)
 
 
 if __name__=="__main__":
@@ -34,4 +42,4 @@ if __name__=="__main__":
     else:
         text = sys.stdin.read()
         pass
-    print convert(text)
+    print(convert(text))

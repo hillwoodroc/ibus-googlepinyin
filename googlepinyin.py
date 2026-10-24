@@ -41,8 +41,10 @@ def im_open_decoder(fn_sys_dict=FN_SYS_DICT, fn_usr_dict=FN_USR_DICT):
     bool im_open_decoder(const char *fn_sys_dict, const char *fn_usr_dict);
     '''
     if not os.path.exists(os.path.dirname(fn_usr_dict)):
-        os.makedirs(os.path.dirname(fn_usr_dict))
+        os.makedirs(os.path.dirname(fn_usr_dict), exist_ok=True)
         pass
+    fn_sys_dict = os.fsencode(fn_sys_dict)
+    fn_usr_dict = os.fsencode(fn_usr_dict)
     return ime_pinyin.im_open_decoder(fn_sys_dict, fn_usr_dict)
 
 def im_close_decoder():
@@ -90,7 +92,10 @@ def im_flush_cache():
      */
     void im_flush_cache();
     '''
-    return ime_pinyin.im_flush_cache()
+    flush_cache = getattr(ime_pinyin, 'im_flush_cache', None)
+    if flush_cache is not None:
+        return flush_cache()
+    return None
 
 def im_search(pinyin_string):
     '''Use a spelling string(Pinyin string) to search
@@ -112,6 +117,8 @@ def im_search(pinyin_string):
      */
     size_t im_search(const char* sps_buf, size_t sps_len);
     '''
+    if isinstance(pinyin_string, str):
+        pinyin_string = pinyin_string.encode('utf8')
     candidates_num = ime_pinyin.im_search(pinyin_string, len(pinyin_string))
     return candidates_num
 
@@ -185,7 +192,7 @@ def im_get_candidate(cand_id, max_len=1024):
     cand_str = ctypes.c_buffer(256)
     candidate = ime_pinyin.im_get_candidate(cand_id, cand_str, max_len)
     # ret = ctypes.c_char_p(candidate).value.decode('utf16').encode('utf8')
-    return cand_str.raw.decode('utf16').encode('utf8').replace('\x00', '')
+    return cand_str.raw.decode('utf16').split('\x00', 1)[0]
 
 _spl_start = ctypes.c_uint16()
 
@@ -278,9 +285,11 @@ def im_get_predicts(his_buf):
     size_t im_get_predicts(const char16 *his_buf,
                            char16 (*&pre_buf)[kMaxPredictSize + 1]);
     '''
-    his_buf = his_buf.decode('utf8').encode('utf16') + '\0'
+    if isinstance(his_buf, str):
+        his_buf = his_buf.encode('utf8')
+    his_buf = his_buf.decode('utf8').encode('utf16') + b'\0'
     num = ime_pinyin.im_get_predicts(his_buf, _pre_buf)
-    return _pre_buf.value.decode('utf16').encode('utf8')
+    return _pre_buf.value.decode('utf16')
 
 def im_enable_shm_as_szm(enable):
     '''Enable Shengmus in ShouZiMu mode
@@ -311,7 +320,7 @@ if __name__=="__main__":
         pinyin = sys.argv[1]
         im_open_decoder()
         num = im_search(pinyin)
-        print '\t'.join((('%3s %s') % (i, im_get_candidate(i)) for i in range(num)))
+        print('\t'.join((('%3s %s') % (i, im_get_candidate(i)) for i in range(num))))
         pass
     else:
         try:
@@ -322,19 +331,19 @@ if __name__=="__main__":
         num = 0
         while True:
             try:
-                i = raw_input('> ')
+                i = input('> ')
             except:
                 im_close_decoder()
                 break
             if i and i[0].isalpha():
                 im_reset_search()
                 num = im_search(i)
-                print '\t'.join((('%3s %s') % (i, im_get_candidate(i)) for i in range(num)))
+                print('\t'.join((('%3s %s') % (i, im_get_candidate(i)) for i in range(num))))
                 pass
             elif i.isdigit() and int(i) < num:
                 num = im_choose(int(i))
-                print '-', im_get_fixed_len()
-                print '\t'.join((('%3s %s') % (i, im_get_candidate(i)) for i in range(num)))
+                print('-', im_get_fixed_len())
+                print('\t'.join((('%3s %s') % (i, im_get_candidate(i)) for i in range(num))))
                 pass
             pass
         pass

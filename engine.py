@@ -23,12 +23,29 @@
 import os
 import signal
 import os.path as path
-import gobject
-import pango
-import ibus
-from ibus import keysyms
-from ibus import modifier
-from ibus import ascii
+import gi
+gi.require_version('IBus', '1.0')
+gi.require_version('Gdk', '3.0')
+gi.require_version('Pango', '1.0')
+from gi.repository import Gdk, GLib, IBus, Pango
+
+ibus = IBus
+pango = Pango
+gobject = GLib
+class _Keysyms:
+    def __getattr__(self, name):
+        return getattr(Gdk, 'KEY_' + name.lstrip('_'))
+
+keysyms = _Keysyms()
+modifier = IBus.ModifierType
+
+def _half_to_full(char):
+    codepoint = ord(char)
+    if codepoint == 0x20:
+        return '\u3000'
+    if 0x21 <= codepoint <= 0x7e:
+        return chr(codepoint + 0xfee0)
+    return char
 
 #from pygooglepinyin import *
 from googlepinyin import *
@@ -46,9 +63,9 @@ import os, sys
 import gettext
 
 if os.path.isdir(os.path.dirname(sys.argv[0]) + '/../build/mo'):
-    gettext.install(app, os.path.dirname(sys.argv[0]) + '/../build/mo', unicode=True)
+    gettext.install(app, os.path.dirname(sys.argv[0]) + '/../build/mo')
 else:
-    gettext.install(app, unicode=True)
+    gettext.install(app)
 
 import time
 import atexit
@@ -57,13 +74,13 @@ atexit.register(lambda *args: im_flush_cache())
 IBUS_GOOGLEPINYIN_LOCATION = path.dirname(__file__)
 
 
-class Engine(ibus.EngineBase):
+class Engine(ibus.Engine):
 
-    def __init__(self, bus, object_path):
-        super(Engine, self).__init__(bus, object_path)
+    def __init__(self, **kwargs):
+        super(Engine, self).__init__(**kwargs)
         im_open_decoder()
         self.__is_invalidate = False
-        self.__prepinyin_string = u""
+        self.__prepinyin_string = ""
         self.__lookup_table = ibus.LookupTable()
         self.__lookup_table.set_page_size(5)
 
@@ -75,63 +92,70 @@ class Engine(ibus.EngineBase):
         self.__full_width_punct[1] = True #config.get_value("engine/PinYin/FullWidthPunct", True)
         self.__trad_chinese = [False, False]
 
-        self.reset()
+        self.do_reset()
 
         # init properties
         self.__prop_list = ibus.PropList()
-        self.__status_property = ibus.Property(u"status")
+        self.__status_property = self.__new_property("status")
         self.__prop_list.append(self.__status_property)
-        self.__letter_property = ibus.Property(u"full_letter")
+        self.__letter_property = self.__new_property("full_letter")
         self.__prop_list.append(self.__letter_property)
-        self.__punct_property = ibus.Property(u"full_punct")
+        self.__punct_property = self.__new_property("full_punct")
         self.__prop_list.append(self.__punct_property)
-        self.__trad_chinese_property = ibus.Property(u"_trad chinese")
+        self.__trad_chinese_property = self.__new_property("_trad chinese")
         if globals().get('libopencc'):
             self.__prop_list.append(self.__trad_chinese_property)
             pass
 
+    @staticmethod
+    def __new_property(key):
+        return IBus.Property.new(key, IBus.PropType.NORMAL,
+                                 IBus.Text.new_from_string(""), "",
+                                 IBus.Text.new_from_string(""), True, True,
+                                 IBus.PropState.UNCHECKED)
+
     def __refresh_properties(self):
         try:
             self.__refresh_properties2()
-        except e:
-            print e
+        except Exception as e:
+            print(e)
 
     def __refresh_properties2(self):
         if self.__mode == 1: # refresh mode
             self.__status_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "chinese.svg")
-            self.__status_property.label = _(u"CN")
-            self.__status_property.tooltip = _(u"Switch to English mode")
+            self.__status_property.label = _("CN")
+            self.__status_property.tooltip = _("Switch to English mode")
         else:
             self.__status_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "english.svg")
-            self.__status_property.label = _(u"EN")
-            self.__status_property.tooltip = _(u"Switch to Chinese mode")
+            self.__status_property.label = _("EN")
+            self.__status_property.tooltip = _("Switch to Chinese mode")
 
         if self.__full_width_letter[self.__mode]:
             self.__letter_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "full-letter.svg")
-            self.__letter_property.label = u"Ａａ"
-            self.__letter_property.tooltip = _(u"Switch to half letter mode")
+            self.__letter_property.label = "Ａａ"
+            self.__letter_property.tooltip = _("Switch to half letter mode")
         else:
             self.__letter_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "half-letter.svg")
-            self.__letter_property.label = u"Aa"
-            self.__letter_property.tooltip = _(u"Switch to full letter mode")
+            self.__letter_property.label = "Aa"
+            self.__letter_property.tooltip = _("Switch to full letter mode")
 
         if self.__full_width_punct[self.__mode]:
             self.__punct_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "full-punct.svg")
-            self.__punct_property.label = u"，。"
-            self.__punct_property.tooltip = _(u"Switch to half punctuation mode")
+            self.__punct_property.label = "，。"
+            self.__punct_property.tooltip = _("Switch to half punctuation mode")
         else:
             self.__punct_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "half-punct.svg")
-            self.__punct_property.label = u".,"
-            self.__punct_property.tooltip = _(u"Switch to full punctuation mode")
+            self.__punct_property.label = ".,"
+            self.__punct_property.tooltip = _("Switch to full punctuation mode")
 
         if self.__trad_chinese[self.__mode]:
             self.__trad_chinese_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "trad-chinese.svg")
-            self.__trad_chinese_property.label = u"，。"
-            self.__trad_chinese_property.tooltip = _(u"Switch to Traditional Chinese mode")
+            self.__trad_chinese_property.label = "，。"
+            self.__trad_chinese_property.tooltip = _("Switch to Traditional Chinese mode")
         else:
             self.__trad_chinese_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "simp-chinese.svg")
-            self.__trad_chinese_property.label = u".,"
-            self.__trad_chinese_property.tooltip = _(u"Switch to Simplified Chinese mode")
+            self.__trad_chinese_property.label = ".,"
+            self.__trad_chinese_property.tooltip = _("Switch to Simplified Chinese mode")
 
         properties =(
             self.__status_property,
@@ -158,9 +182,9 @@ class Engine(ibus.EngineBase):
     __last_im_flush_cache_time = 0
     __candidate_num = 0
     __lookup_candidate_num = 0
-    __prev_char = u''
+    __prev_char = ''
 
-    def process_key_event(self, keyval, keycode, state):
+    def do_process_key_event(self, keyval, keycode, state):
         ## for key release events
         is_press = ((state & modifier.RELEASE_MASK) == 0)
         if is_press:
@@ -169,17 +193,17 @@ class Engine(ibus.EngineBase):
         ## Match Shift to switcc English/Chinese mode
         elif keyval == self.__last_press_keyval \
                 and (keyval == keysyms.Shift_L or keyval == keysyms.Shift_R):
-            self.property_activate("status")
-            self.reset()
+            self.do_property_activate("status", IBus.PropState.UNCHECKED)
+            self.do_reset()
             return False
         ## ignore key release events
         else:
             return False
 
         if self.__is_input_english():
-            if ascii.isprint(chr(keyval)) and self.__full_width_letter[self.__mode] :
-                c = unichr(keyval)
-                c = ibus.unichar_half_to_full(c)
+            if 32 <= keyval < 127 and self.__full_width_letter[self.__mode] :
+                c = chr(keyval)
+                c = _half_to_full(c)
                 self.__commit_string(c)
                 return True
             return False
@@ -187,14 +211,13 @@ class Engine(ibus.EngineBase):
         if self.__prepinyin_string:
             if keyval == keysyms.Return:
                 if self.__full_width_letter[self.__mode]:
-                    self.__prepinyin_string = u''.join(
-                            (ibus.unichar_half_to_full(c) for c in self.__prepinyin_string)
-                        )
+                    self.__prepinyin_string = ''.join(
+                            (_half_to_full(c) for c in self.__prepinyin_string))
                     pass
                 self.__commit_string(self.__prepinyin_string)
                 return True
             elif keyval == keysyms.Escape:
-                self.__prepinyin_string = u""
+                self.__prepinyin_string = ""
                 self.__update()
                 return True
             elif keyval == keysyms.BackSpace:
@@ -245,26 +268,26 @@ class Engine(ibus.EngineBase):
                 return True
             elif keyval == keysyms.Left or keyval == keysyms.Right:
                 return True
-        if keyval in xrange(keysyms.a, keysyms.z + 1) or \
+        if keyval in range(keysyms.a, keysyms.z + 1) or \
                 (keyval == keysyms.quoteright and self.__prepinyin_string):
             if self.__lookup_table.get_number_of_candidates() \
-                    and len(self.__lookup_table.get_candidate(0).text.decode('utf8'))\
+                    and len(self.__lookup_table.get_candidate(0).text)\
                         >= MAX_SPELLINGS:
                 return True
-            if state & (modifier.CONTROL_MASK | modifier.ALT_MASK) == 0:
-                self.__prepinyin_string += unichr(keyval)
+            if state & (modifier.CONTROL_MASK | modifier.MOD1_MASK) == 0:
+                self.__prepinyin_string += chr(keyval)
                 self.__invalidate()
                 return True
         else:
-            c = unichr(keyval)
-            if c == u"." and self.__prev_char and self.__prev_char.isdigit():
+            c = chr(keyval)
+            if c == "." and self.__prev_char and self.__prev_char.isdigit():
                 return False
-            if self.__full_width_punct[self.__mode] and c in u'~!$^&*()_[{]}\\|;:\'",<.>/?':
+            if self.__full_width_punct[self.__mode] and c in '~!$^&*()_[{]}\\|;:\'",<.>/?':
                 c = self.__convert_to_full_width(c)
                 self.__commit_string(c)
                 return True
-            if self.__full_width_letter[self.__mode] and ascii.isprint(chr(keyval)):
-                c = ibus.unichar_half_to_full(c)
+            if self.__full_width_letter[self.__mode] and 32 <= keyval < 127:
+                c = _half_to_full(c)
                 self.__commit_string(c)
                 return True
             if keyval < 128 and self.__prepinyin_string:
@@ -280,7 +303,7 @@ class Engine(ibus.EngineBase):
         if self.__is_invalidate:
             return
         self.__is_invalidate = True
-        gobject.idle_add(self.__update, priority = gobject.PRIORITY_LOW)
+        gobject.idle_add(self.__update, priority=GLib.PRIORITY_LOW)
 
 
     def __lookup_more_candidates(self):
@@ -289,7 +312,7 @@ class Engine(ibus.EngineBase):
                     self.__lookup_candidate_num + self.__lookup_table.get_page_size() + 1)
             for i in range(self.__lookup_candidate_num, num):
                 text = im_get_candidate(i)
-                self.__lookup_table.append_candidate(ibus.Text(text))
+                self.__lookup_table.append_candidate(IBus.Text.new_from_string(text))
                 pass
             self.__lookup_candidate_num = num
             self.__update_lookup_table()
@@ -323,9 +346,9 @@ class Engine(ibus.EngineBase):
         return False
 
     def __commit_string(self, text):
-        self.commit_text(ibus.Text(text))
-        self.__prepinyin_string = u""
-        self.__prev_char = text and text[-1] or u''
+        self.commit_text(IBus.Text.new_from_string(text))
+        self.__prepinyin_string = ""
+        self.__prev_char = text and text[-1] or ''
         self.__update()
 
     def __update(self):
@@ -339,20 +362,22 @@ class Engine(ibus.EngineBase):
             self.__lookup_candidate_num = min(num, self.__lookup_table.get_page_size() + 1)
             for i in range(self.__lookup_candidate_num):
                 text = im_get_candidate(i)
-                self.__lookup_table.append_candidate(ibus.Text(text))
+                self.__lookup_table.append_candidate(IBus.Text.new_from_string(text))
                 pass
             pass
         preedit_string = self.__lookup_table \
                 and self.__lookup_table.get_number_of_candidates() \
-                and self.__lookup_table.get_candidate(0).text.decode('utf8') or u""
+                and self.__lookup_table.get_candidate(0).text or ""
         preedit_len = len(preedit_string)
         preedit_pos = im_get_fixed_len()
 
-        self.update_auxiliary_text(ibus.Text(self.__prepinyin_string, attrs), prepinyin_len > 0)
-        attrs.append(ibus.AttributeUnderline(pango.UNDERLINE_SINGLE, 0, preedit_len))
+        self.update_auxiliary_text(IBus.Text.new_from_string(self.__prepinyin_string), prepinyin_len > 0)
+        attrs.append(IBus.Attribute.new(IBus.AttrType.UNDERLINE, Pango.Underline.SINGLE, 0, preedit_len))
         if prepinyin_len > preedit_pos:
-            attrs.append(ibus.AttributeBackground(0xc8c8f0, preedit_pos, preedit_len))
-        self.update_preedit_text(ibus.Text(preedit_string, attrs), preedit_pos, preedit_len > 0)
+            attrs.append(IBus.Attribute.new(IBus.AttrType.BACKGROUND, 0xc8c8f0, preedit_pos, preedit_len))
+        preedit = IBus.Text.new_from_string(preedit_string)
+        preedit.set_attributes(attrs)
+        self.update_preedit_text(preedit, preedit_pos, preedit_len > 0)
         self.__update_lookup_table()
         self.__is_invalidate = False
 
@@ -364,57 +389,57 @@ class Engine(ibus.EngineBase):
     __double_quotation_state = 0
     __single_quotation_state = 0
     def __convert_to_full_width(self, c):
-        if c == u".":
-            return u"\u3002"
-        elif c == u"\\":
-            return u"\u3001"
-        elif c == u"^":
-            return u"\u2026\u2026"
-        elif c == u"_":
-            return u"\u2014\u2014"
-        elif c == u"$":
-            return u"\uffe5"
-        elif c == u"\"":
+        if c == ".":
+            return "\u3002"
+        elif c == "\\":
+            return "\u3001"
+        elif c == "^":
+            return "\u2026\u2026"
+        elif c == "_":
+            return "\u2014\u2014"
+        elif c == "$":
+            return "\uffe5"
+        elif c == "\"":
             self.__double_quotation_state = not self.__double_quotation_state
             if self.__double_quotation_state:
-                return u"\u201c"
+                return "\u201c"
             else:
-                return u"\u201d"
-        elif c == u"'":
+                return "\u201d"
+        elif c == "'":
             self.__single_quotation_state = not self.__single_quotation_state
             if self.__single_quotation_state:
-                return u"\u2018"
+                return "\u2018"
             else:
-                return u"\u2019"
+                return "\u2019"
 
-        elif c == u"<":
-            return u"\u300a"
-        elif c == u">":
-            return u"\u300b"
+        elif c == "<":
+            return "\u300a"
+        elif c == ">":
+            return "\u300b"
 
-        return ibus.unichar_half_to_full(c)
+        return _half_to_full(c)
 
 
-    def focus_in(self):
-        self.reset()
+    def do_focus_in(self):
+        self.do_reset()
         self.register_properties(self.__prop_list)
         self.__refresh_properties()
 
-    def focus_out(self):
-        self.reset()
+    def do_focus_out(self):
+        self.do_reset()
         pass
 
-    def reset(self):
+    def do_reset(self):
         im_reset_search()
         self.__double_quotation_state = False
         self.__single_quotation_state = False
-        self.__prepinyin_string = u""
+        self.__prepinyin_string = ""
         self.__candidate_num = 0
         self.__lookup_candidate_num = 0
         self.__invalidate()
         pass
 
-    def property_activate(self, prop_name, prop_state = ibus.PROP_STATE_UNCHECKED):
+    def do_property_activate(self, prop_name, prop_state=IBus.PropState.UNCHECKED):
         #print "PropertyActivate(%s)" % prop_name
         if prop_name == "status":
             self.__change_mode()
