@@ -1,15 +1,11 @@
-googlepinyin install instructions
-=================================================
+Dependencies: CMake >= 3.12, Python 3, PyGObject, GTK 3, IBus introspection,
+libgooglepinyin and its dictionary, glib-compile-schemas, GNU gettext tools (msgfmt), optional OpenCC.
 
+  cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build
+  sudo cmake --install build
 
-Dependencies: cmake python3 python3-gi gir1.2-ibus-1.0 opencc ibus
-
-
-To compile and install, go in the source directory and type:
-
-  mkdir build; cd build
-  cmake .. -DCMAKE_INSTALL_PREFIX=/usr
-  make
-  sudo make install
-
-
+Open preferences with /usr/libexec/ibus-setup-googlepinyin (or the configured
+CMAKE_INSTALL_LIBEXECDIR). RPM builds may pass
+-DCMAKE_INSTALL_LIBEXECDIR:PATH=%{_libexecdir}. See README.md for features,
+backend limitations and tests.

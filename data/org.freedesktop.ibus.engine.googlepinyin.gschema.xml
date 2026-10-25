@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='utf-8'?>
+<schemalist>
+  <schema id="org.freedesktop.ibus.engine.googlepinyin" path="/org/freedesktop/ibus/engine/googlepinyin/">
+    <key name="initial-chinese" type="b">
+      <default>true</default>
+      <summary>Initial chinese</summary>
+    </key>
+    <key name="initial-full-width" type="b">
+      <default>false</default>
+      <summary>Initial full width</summary>
+    </key>
+    <key name="initial-full-punct" type="b">
+      <default>true</default>
+      <summary>Initial full punct</summary>
+    </key>
+    <key name="initial-traditional" type="b">
+      <default>false</default>
+      <summary>Initial traditional</summary>
+    </key>
+    <key name="orientation" type="i">
+      <range min="0" max="2" />
+      <default>0</default>
+      <summary>Orientation</summary>
+    </key>
+    <key name="page-size" type="i">
+      <range min="1" max="9" />
+      <default>9</default>
+      <summary>Page size</summary>
+    </key>
+    <key name="display-style" type="i">
+      <range min="0" max="1" />
+      <default>0</default>
+      <summary>Display style</summary>
+    </key>
+    <key name="dynamic-adjust" type="b">
+      <default>true</default>
+      <summary>Dynamic adjust</summary>
+    </key>
+    <key name="remember-new-words" type="b">
+      <default>true</default>
+      <summary>Remember new words</summary>
+    </key>
+    <key name="sort-order" type="i">
+      <range min="0" max="2" />
+      <default>0</default>
+      <summary>Sort order</summary>
+    </key>
+    <key name="keyboard-layout" type="s">
+      <default>'default'</default>
+      <summary>Keyboard layout</summary>
+    </key>
+    <key name="double-pinyin" type="b">
+      <default>false</default>
+      <summary>Double pinyin</summary>
+    </key>
+    <key name="double-pinyin-schema" type="i">
+      <range min="0" max="5" />
+      <default>0</default>
+      <summary>Double pinyin schema</summary>
+    </key>
+    <key name="double-pinyin-show-raw" type="b">
+      <default>false</default>
+      <summary>Double pinyin show raw</summary>
+    </key>
+    <key name="incomplete-pinyin" type="b">
+      <default>true</default>
+      <summary>Incomplete pinyin</summary>
+    </key>
+    <key name="shift-select" type="b">
+      <default>false</default>
+      <summary>Shift select</summary>
+    </key>
+    <key name="minus-equal-page" type="b">
+      <default>true</default>
+      <summary>Minus equal page</summary>
+    </key>
+    <key name="comma-period-page" type="b">
+      <default>false</default>
+      <summary>Comma period page</summary>
+    </key>
+    <key name="bracket-page" type="b">
+      <default>false</default>
+      <summary>Bracket page</summary>
+    </key>
+    <key name="auto-commit" type="b">
+      <default>false</default>
+      <summary>Auto commit</summary>
+    </key>
+    <key name="correct-pinyin" type="b">
+      <default>true</default>
+      <summary>Correct pinyin</summary>
+    </key>
+    <key name="fuzzy-pinyin" type="b">
+      <default>false</default>
+      <summary>Fuzzy pinyin</summary>
+    </key>
+    <key name="correct-pinyin-gn-ng" type="b">
+      <default>true</default>
+      <summary>Correct pinyin gn ng</summary>
+    </key>
+    <key name="correct-pinyin-mg-ng" type="b">
+      <default>true</default>
+      <summary>Correct pinyin mg ng</summary>
+    </key>
+    <key name="correct-pinyin-iou-iu" type="b">
+      <default>true</default>
+      <summary>Correct pinyin iou iu</summary>
+    </key>
+    <key name="correct-pinyin-uei-ui" type="b">
+      <default>true</default>
+      <summary>Correct pinyin uei ui</summary>
+    </key>
+    <key name="correct-pinyin-uen-un" type="b">
+      <default>true</default>
+      <summary>Correct pinyin uen un</summary>
+    </key>
+    <key name="correct-pinyin-ue-ve" type="b">
+      <default>true</default>
+      <summary>Correct pinyin ue ve</summary>
+    </key>
+    <key name="correct-pinyin-v-u" type="b">
+      <default>true</default>
+      <summary>Correct pinyin v u</summary>
+    </key>
+    <key name="correct-pinyin-on-ong" type="b">
+      <default>true</default>
+      <summary>Correct pinyin on ong</summary>
+    </key>
+    <key name="fuzzy-pinyin-c-ch" type="b">
+      <default>true</default>
+      <summary>Fuzzy pinyin c ch</summary>
+    </key>
+    <key name="fuzzy-pinyin-z-zh" type="b">
+      <default>true</default>
+      <summary>Fuzzy pinyin z zh</summary>
+    </key>
+    <key name="fuzzy-pinyin-s-sh" type="b">
+      <default>true</default>
+      <summary>Fuzzy pinyin s sh</summary>
+    </key>
+    <key name="fuzzy-pinyin-l-n" type="b">
+      <default>true</default>
+      <summary>Fuzzy pinyin l n</summary>
+    </key>
+    <key name="fuzzy-pinyin-f-h" type="b">
+      <default>true</default>
+      <summary>Fuzzy pinyin f h</summary>
+    </key>
+    <key name="fuzzy-pinyin-l-r" type="b">
+      <default>false</default>
+      <summary>Fuzzy pinyin l r</summary>
+    </key>
+    <key name="fuzzy-pinyin-g-k" type="b">
+      <default>false</default>
+      <summary>Fuzzy pinyin g k</summary>
+    </key>
+    <key name="fuzzy-pinyin-an-ang" type="b">
+      <default>true</default>
+      <summary>Fuzzy pinyin an ang</summary>
+    </key>
+    <key name="fuzzy-pinyin-en-eng" type="b">
+      <default>true</default>
+      <summary>Fuzzy pinyin en eng</summary>
+    </key>
+    <key name="fuzzy-pinyin-in-ing" type="b">
+      <default>true</default>
+      <summary>Fuzzy pinyin in ing</summary>
+    </key>
+    <key name="shortcut-switch-mode" type="s">
+      <default>'&lt;Shift&gt;'</default>
+      <summary>Shortcut switch mode</summary>
+    </key>
+    <key name="shortcut-full-width" type="s">
+      <default>'&lt;Shift&gt;space'</default>
+      <summary>Shortcut full width</summary>
+    </key>
+    <key name="shortcut-punctuation" type="s">
+      <default>'&lt;Control&gt;period'</default>
+      <summary>Shortcut punctuation</summary>
+    </key>
+    <key name="shortcut-all-width" type="s">
+      <default>''</default>
+      <summary>Shortcut all width</summary>
+    </key>
+    <key name="shortcut-traditional" type="s">
+      <default>'&lt;Control&gt;&lt;Shift&gt;f'</default>
+      <summary>Shortcut traditional</summary>
+    </key>
+  </schema>
+</schemalist>

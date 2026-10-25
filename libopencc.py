@@ -21,7 +21,10 @@ opencc.opencc_open.restype = ctypes.c_void_p
 opencc.opencc_convert_utf8.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_int]
 opencc.opencc_convert_utf8.restype = ctypes.c_void_p
 libc.free.argtypes = [ctypes.c_void_p]
-od = opencc.opencc_open(b'zhs2zht.ini')
+opencc.opencc_convert_utf8_free.argtypes = [ctypes.c_void_p]
+od = opencc.opencc_open(b's2t.json')
+if od in (None, ctypes.c_void_p(-1).value):
+    raise RuntimeError('Unable to open OpenCC s2t.json')
 
 def convert(text):
     '''convert simplified chinese to traditional chinese
@@ -29,10 +32,12 @@ def convert(text):
     if isinstance(text, str):
         text = text.encode('utf8')
     ret = opencc.opencc_convert_utf8(od, text, -1)
+    if not ret:
+        raise RuntimeError('OpenCC conversion failed')
     try:
         return ctypes.string_at(ret).decode('utf8')
     finally:
-        libc.free(ret)
+        opencc.opencc_convert_utf8_free(ret)
 
 
 if __name__=="__main__":

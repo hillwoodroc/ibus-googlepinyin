@@ -1,0 +1,2 @@
+#!/bin/sh
+exec "@IBUS_GOOGLEPINYIN_PKGDATADIR@/setup.py" "$@"

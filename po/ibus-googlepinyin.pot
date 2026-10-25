@@ -1,0 +1,419 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the ibus-googlepinyin package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ibus-googlepinyin 0.42.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-25 17:46+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: setup.py:20 engine.py:109
+msgid "Preferences"
+msgstr ""
+
+#: setup.py:36
+msgid "_Close"
+msgstr ""
+
+#: setup.py:117
+msgid "General"
+msgstr ""
+
+#: setup.py:118
+msgid "Initial State"
+msgstr ""
+
+#: setup.py:120
+msgid "Language:"
+msgstr ""
+
+#: setup.py:120 engine.py:169
+msgid "Chinese"
+msgstr ""
+
+#: setup.py:120 engine.py:169
+msgid "English"
+msgstr ""
+
+#: setup.py:121
+msgid "Full/Half Width:"
+msgstr ""
+
+#: setup.py:121 setup.py:122
+msgid "Full"
+msgstr ""
+
+#: setup.py:121 setup.py:122
+msgid "Half"
+msgstr ""
+
+#: setup.py:122
+msgid "Punctuation:"
+msgstr ""
+
+#: setup.py:129
+msgid "Chinese:"
+msgstr ""
+
+#: setup.py:129
+msgid "Simplified"
+msgstr ""
+
+#: setup.py:129
+msgid "Traditional"
+msgstr ""
+
+#: setup.py:130
+msgid "Appearance"
+msgstr ""
+
+#: setup.py:133
+msgid "Display Style:"
+msgstr ""
+
+#: setup.py:133
+msgid "Default"
+msgstr ""
+
+#: setup.py:133
+msgid "Pinyin"
+msgstr ""
+
+#: setup.py:134
+msgid "Candidate Word Orientation:"
+msgstr ""
+
+#: setup.py:134
+msgid "Horizontal"
+msgstr ""
+
+#: setup.py:134
+msgid "Vertical"
+msgstr ""
+
+#: setup.py:134
+msgid "System Default"
+msgstr ""
+
+#: setup.py:137
+msgid "Number of Candidates:"
+msgstr ""
+
+#: setup.py:147
+msgid "Candidates"
+msgstr ""
+
+#: setup.py:149
+msgid "Sort Candidates by:"
+msgstr ""
+
+#: setup.py:150
+msgid "Frequency"
+msgstr ""
+
+#: setup.py:150
+msgid "Longest First"
+msgstr ""
+
+#: setup.py:150
+msgid "Shortest First"
+msgstr ""
+
+#: setup.py:153 setup.py:154
+msgid "Pinyin Mode"
+msgstr ""
+
+#: setup.py:156
+msgid "Full Pinyin"
+msgstr ""
+
+#: setup.py:157
+msgid "Double Pinyin"
+msgstr ""
+
+#: setup.py:170
+msgid "Incomplete Pinyin"
+msgstr ""
+
+#: setup.py:171
+msgid "Show Raw Double Pinyin"
+msgstr ""
+
+#: setup.py:173
+msgid "Input Custom"
+msgstr ""
+
+#: setup.py:176
+msgid "[Shift] Selects the Second Candidate"
+msgstr ""
+
+#: setup.py:177
+msgid "[-][=] Flip Page"
+msgstr ""
+
+#: setup.py:178
+msgid "[,][.] Flip Page"
+msgstr ""
+
+#: setup.py:179
+msgid "[ ][ ] Flip Page"
+msgstr ""
+
+#: setup.py:180
+msgid "Auto Commit"
+msgstr ""
+
+#: setup.py:182
+msgid "Pinyin Correction"
+msgstr ""
+
+#: setup.py:184
+msgid "Enable Pinyin Correction"
+msgstr ""
+
+#: setup.py:194
+msgid "Fuzzy Pinyin"
+msgstr ""
+
+#: setup.py:199
+msgid "Enable Fuzzy Pinyin"
+msgstr ""
+
+#: setup.py:206
+msgid "User Data"
+msgstr ""
+
+#: setup.py:208
+msgid "User Dictionary"
+msgstr ""
+
+#: setup.py:211
+msgid ""
+"Exit IBus before backing up or restoring the dictionary. The original file "
+"will be saved as .bak."
+msgstr ""
+
+#: setup.py:213
+msgid "Back Up User Dictionary…"
+msgstr ""
+
+#: setup.py:213
+msgid "Restore User Dictionary…"
+msgstr ""
+
+#: setup.py:228
+msgid "Please exit IBus before backing up or restoring the user dictionary."
+msgstr ""
+
+#: setup.py:231
+msgid "Back Up User Dictionary"
+msgstr ""
+
+#: setup.py:231
+msgid "Restore User Dictionary"
+msgstr ""
+
+#: setup.py:234 setup.py:293
+msgid "_Cancel"
+msgstr ""
+
+#: setup.py:234 setup.py:293
+msgid "_OK"
+msgstr ""
+
+#: setup.py:246
+msgid "Operation completed. Restart IBus to apply the changes."
+msgstr ""
+
+#: setup.py:258
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: setup.py:264
+msgid "Description"
+msgstr ""
+
+#: setup.py:264
+msgid "Shortcut"
+msgstr ""
+
+#: setup.py:273
+msgid "_Default"
+msgstr ""
+
+#: setup.py:275
+msgid "_Edit"
+msgstr ""
+
+#: setup.py:292
+msgid "Edit Shortcut"
+msgstr ""
+
+#: setup.py:303
+msgid ""
+"Press a key combination, or enter <Control><Shift>f. Leave empty to disable."
+msgstr ""
+
+#: setup.py:324
+msgid "The shortcut is invalid or already assigned. Please choose another."
+msgstr ""
+
+#: setup.py:333
+msgid "About"
+msgstr ""
+
+#: setup.py:339
+msgid "IBus Google Pinyin"
+msgstr ""
+
+#: setup.py:341
+msgid "IBus Google Pinyin Input Method"
+msgstr ""
+
+#: setup.py:344
+msgid ""
+"Authors:\n"
+"Jiahua Huang\n"
+"Hillwood Yang"
+msgstr ""
+
+#: setup.py:344
+msgid ""
+"Preferences layout based on:\n"
+"ibus-libpinyin\n"
+"Peng Huang, BYVoid, Peng Wu"
+msgstr ""
+
+#: setup.py:345
+msgid "License: GPL-2.0-or-later"
+msgstr ""
+
+#: engine.py:169
+msgid "CN"
+msgstr ""
+
+#: engine.py:169
+msgid "EN"
+msgstr ""
+
+#: engine.py:170
+msgid "Switch to English Mode"
+msgstr ""
+
+#: engine.py:170
+msgid "Switch to Chinese Mode"
+msgstr ""
+
+#: engine.py:173
+msgid "Full Width Letters"
+msgstr ""
+
+#: engine.py:173
+msgid "Half Width Letters"
+msgstr ""
+
+#: engine.py:174
+msgid "Switch to Half Width Letters"
+msgstr ""
+
+#: engine.py:174
+msgid "Switch to Full Width Letters"
+msgstr ""
+
+#: engine.py:177
+msgid "Full Width Punctuation"
+msgstr ""
+
+#: engine.py:177
+msgid "Half Width Punctuation"
+msgstr ""
+
+#: engine.py:178
+msgid "Switch to Half Width Punctuation"
+msgstr ""
+
+#: engine.py:178
+msgid "Switch to Full Width Punctuation"
+msgstr ""
+
+#: engine.py:183
+msgid "Traditional Chinese"
+msgstr ""
+
+#: engine.py:183
+msgid "Simplified Chinese"
+msgstr ""
+
+#: engine.py:184
+msgid "Trad"
+msgstr ""
+
+#: engine.py:184
+msgid "Simp"
+msgstr ""
+
+#: engine.py:185
+msgid "Switch to Simplified Chinese"
+msgstr ""
+
+#: engine.py:185
+msgid "Switch to Traditional Chinese"
+msgstr ""
+
+#: settings.py:16
+msgid "Switch Chinese/English Mode"
+msgstr ""
+
+#: settings.py:17
+msgid "Full/Half Width Letters"
+msgstr ""
+
+#: settings.py:18
+msgid "Full/Half Width Punctuation"
+msgstr ""
+
+#: settings.py:19
+msgid "Toggle All Full/Half Width"
+msgstr ""
+
+#: settings.py:20
+msgid "Switch Traditional/Simplified Chinese"
+msgstr ""
+
+#: pinyin.py:9
+msgid "Natural Code"
+msgstr ""
+
+#: pinyin.py:9
+msgid "Microsoft Pinyin"
+msgstr ""
+
+#: pinyin.py:9
+msgid "Intelligent ABC"
+msgstr ""
+
+#: pinyin.py:9
+msgid "Ziguang Pinyin"
+msgstr ""
+
+#: pinyin.py:9
+msgid "Pinyin Jiajia"
+msgstr ""
+
+#: pinyin.py:9
+msgid "Xiaohe"
+msgstr ""
+
+#: data/ibus-setup-googlepinyin.desktop.in:3
+msgid "IBus Google Pinyin Preferences"
+msgstr ""

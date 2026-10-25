@@ -39,12 +39,12 @@ class IMApp:
         else:
             self.__component = IBus.Component.new(
                 "org.freedesktop.IBus.GooglePinyin", "GooglePinyin Component",
-                "0.1.2", "GPL", "Jiahua Huang <jhuangjiahua@gmail.com>",
+                "0.42.0", "GPL", "Jiahua Huang <jhuangjiahua@gmail.com>",
                 "", "en")
             self.__component.add_engine(IBus.EngineDesc.new(
                 "googlepinyin", "GooglePinyin", "GooglePinyin Input Method",
                 "zh_CN", "GPL", "Jiahua Huang <jhuangjiahua@gmail.com>",
-                os.path.join(os.path.dirname(__file__), "icons", "ibus-googlepinyin.png"), "us"))
+                os.path.join(os.path.dirname(__file__), "icons", "ibus-googlepinyin.png"), "default"))
             self.__bus.register_component(self.__component)
 
     def run(self):

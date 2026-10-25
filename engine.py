@@ -26,8 +26,11 @@ import os.path as path
 import gi
 gi.require_version('IBus', '1.0')
 gi.require_version('Gdk', '3.0')
+gi.require_version('Gtk', '3.0')
 gi.require_version('Pango', '1.0')
-from gi.repository import Gdk, GLib, IBus, Pango
+from gi.repository import Gdk, GLib, Gtk, IBus, Pango
+from settings import new_settings, SHORTCUTS
+from decoder import Decoder
 
 ibus = IBus
 pango = Pango
@@ -57,15 +60,8 @@ except:
 
 MAX_SPELLINGS = 26
 
-app = 'ibus-googlepinyin'
-
 import os, sys
-import gettext
-
-if os.path.isdir(os.path.dirname(sys.argv[0]) + '/../build/mo'):
-    gettext.install(app, os.path.dirname(sys.argv[0]) + '/../build/mo')
-else:
-    gettext.install(app)
+from i18n import _
 
 import time
 import atexit
@@ -79,18 +75,20 @@ class Engine(ibus.Engine):
     def __init__(self, **kwargs):
         super(Engine, self).__init__(**kwargs)
         im_open_decoder()
+        self.settings = new_settings()
+        self.decoder = Decoder(lambda key: self.settings.get_value(key).unpack())
         self.__is_invalidate = False
         self.__prepinyin_string = ""
         self.__lookup_table = ibus.LookupTable()
-        self.__lookup_table.set_page_size(5)
+        self.__lookup_table.set_page_size(self.settings.get_int("page-size"))
 
         # 0 = english input mode
         # 1 = chinese input mode
-        self.__mode = 1
-        self.__full_width_letter = [False, False]
+        self.__mode = int(self.settings.get_boolean("initial-chinese"))
+        self.__full_width_letter = [False, self.settings.get_boolean("initial-full-width")]
         self.__full_width_punct = [False, True]
-        self.__full_width_punct[1] = True #config.get_value("engine/PinYin/FullWidthPunct", True)
-        self.__trad_chinese = [False, False]
+        self.__full_width_punct[1] = self.settings.get_boolean("initial-full-punct")
+        self.__trad_chinese = [False, self.settings.get_boolean("initial-traditional") and bool(globals().get("libopencc"))]
 
         self.do_reset()
 
@@ -107,6 +105,54 @@ class Engine(ibus.Engine):
             self.__prop_list.append(self.__trad_chinese_property)
             pass
 
+        self.__setup_property = self.__new_property("setup")
+        self.__setup_property.set_label(IBus.Text.new_from_string(_('Preferences')))
+        self.__setup_property.set_icon("preferences-system")
+        self.__prop_list.append(self.__setup_property)
+        self.__settings_handler = self.settings.connect('changed', self.__settings_changed)
+        self.__apply_appearance()
+        self.__refresh_properties()
+
+    def __apply_appearance(self):
+        self.__lookup_table.set_page_size(self.settings.get_int('page-size'))
+        self.__lookup_table.set_orientation(self.settings.get_int('orientation'))
+
+    def __settings_changed(self, settings, key):
+        self.__apply_appearance()
+        if key == 'initial-chinese':
+            self.__mode = int(settings.get_boolean(key))
+        elif key == 'initial-full-width':
+            self.__full_width_letter[1] = settings.get_boolean(key)
+        elif key == 'initial-full-punct':
+            self.__full_width_punct[1] = settings.get_boolean(key)
+        elif key == 'initial-traditional':
+            self.__trad_chinese[1] = settings.get_boolean(key) and bool(globals().get('libopencc'))
+        if key in ('double-pinyin-show-raw', 'display-style'):
+            self.__invalidate()
+        else:
+            self.do_reset()
+        self.__refresh_properties()
+
+    def do_destroy(self):
+        self.settings.disconnect(self.__settings_handler)
+        im_flush_cache()
+        IBus.Engine.do_destroy(self)
+
+    def __shortcut_action(self, keyval, state):
+        for name, _label, _default in SHORTCUTS:
+            shortcut = self.settings.get_string('shortcut-' + name)
+            if not shortcut or shortcut == '<Shift>':
+                continue
+            # IBus parses the same accelerator notation as GTK.
+            expected_key, expected_mods = Gtk.accelerator_parse(shortcut)
+            ok = bool(expected_key)
+            mask = modifier.CONTROL_MASK | modifier.SHIFT_MASK | modifier.MOD1_MASK | modifier.SUPER_MASK
+            if ok and Gdk.keyval_to_lower(keyval) == Gdk.keyval_to_lower(expected_key) and state & mask == expected_mods & mask:
+                return {'switch-mode': 'status', 'full-width': 'full_letter',
+                        'punctuation': 'full_punct', 'traditional': '_trad chinese',
+                        'all-width': 'all_width'}[name]
+        return None
+
     @staticmethod
     def __new_property(key):
         return IBus.Property.new(key, IBus.PropType.NORMAL,
@@ -115,61 +161,42 @@ class Engine(ibus.Engine):
                                  IBus.PropState.UNCHECKED)
 
     def __refresh_properties(self):
-        try:
-            self.__refresh_properties2()
-        except Exception as e:
-            print(e)
-
-    def __refresh_properties2(self):
-        if self.__mode == 1: # refresh mode
-            self.__status_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "chinese.svg")
-            self.__status_property.label = _("CN")
-            self.__status_property.tooltip = _("Switch to English mode")
-        else:
-            self.__status_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "english.svg")
-            self.__status_property.label = _("EN")
-            self.__status_property.tooltip = _("Switch to Chinese mode")
-
-        if self.__full_width_letter[self.__mode]:
-            self.__letter_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "full-letter.svg")
-            self.__letter_property.label = "Ａａ"
-            self.__letter_property.tooltip = _("Switch to half letter mode")
-        else:
-            self.__letter_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "half-letter.svg")
-            self.__letter_property.label = "Aa"
-            self.__letter_property.tooltip = _("Switch to full letter mode")
-
-        if self.__full_width_punct[self.__mode]:
-            self.__punct_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "full-punct.svg")
-            self.__punct_property.label = "，。"
-            self.__punct_property.tooltip = _("Switch to half punctuation mode")
-        else:
-            self.__punct_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "half-punct.svg")
-            self.__punct_property.label = ".,"
-            self.__punct_property.tooltip = _("Switch to full punctuation mode")
-
-        if self.__trad_chinese[self.__mode]:
-            self.__trad_chinese_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "trad-chinese.svg")
-            self.__trad_chinese_property.label = "，。"
-            self.__trad_chinese_property.tooltip = _("Switch to Traditional Chinese mode")
-        else:
-            self.__trad_chinese_property.icon = path.join(IBUS_GOOGLEPINYIN_LOCATION, "icons", "simp-chinese.svg")
-            self.__trad_chinese_property.label = ".,"
-            self.__trad_chinese_property.tooltip = _("Switch to Simplified Chinese mode")
-
-        properties =(
-            self.__status_property,
-            self.__letter_property,
-            self.__punct_property,
-            self.__trad_chinese_property,
-            )
-
-        for prop in properties:
+        # Labels are used by the IBus dropdown; symbols are used by panels.
+        # Always update the serializable IBus.Property, not Python attributes.
+        chinese = self.__mode == 1
+        full_letter = self.__full_width_letter[self.__mode]
+        full_punct = self.__full_width_punct[self.__mode]
+        traditional = self.__trad_chinese[self.__mode]
+        items = [
+            (self.__status_property,
+             _('Chinese') if chinese else _('English'), _('CN') if chinese else _('EN'),
+             _('Switch to English Mode') if chinese else _('Switch to Chinese Mode'),
+             'chinese.svg' if chinese else 'english.svg'),
+            (self.__letter_property,
+             _('Full Width Letters') if full_letter else _('Half Width Letters'), 'Ａ' if full_letter else 'A',
+             _('Switch to Half Width Letters') if full_letter else _('Switch to Full Width Letters'),
+             'full-letter.svg' if full_letter else 'half-letter.svg'),
+            (self.__punct_property,
+             _('Full Width Punctuation') if full_punct else _('Half Width Punctuation'), '。' if full_punct else '.',
+             _('Switch to Half Width Punctuation') if full_punct else _('Switch to Full Width Punctuation'),
+             'full-punct.svg' if full_punct else 'half-punct.svg'),
+        ]
+        if globals().get('libopencc'):
+            items.append((self.__trad_chinese_property,
+                          _('Traditional Chinese') if traditional else _('Simplified Chinese'),
+                          _('Trad') if traditional else _('Simp'),
+                          _('Switch to Simplified Chinese') if traditional else _('Switch to Traditional Chinese'),
+                          'trad-chinese.svg' if traditional else 'simp-chinese.svg'))
+        for prop, label, symbol, tooltip, icon in items:
+            prop.set_label(IBus.Text.new_from_string(label))
+            prop.set_symbol(IBus.Text.new_from_string(symbol))
+            prop.set_tooltip(IBus.Text.new_from_string(tooltip))
+            prop.set_icon(path.join(IBUS_GOOGLEPINYIN_LOCATION, 'icons', icon))
             self.update_property(prop)
 
-
     def __change_mode(self):
-        self.__mode =(self.__mode + 1) % 2
+        self.__mode = (self.__mode + 1) % 2
+        self.do_reset()
         self.__refresh_properties()
 
     def __is_input_english(self):
@@ -193,6 +220,10 @@ class Engine(ibus.Engine):
         ## Match Shift to switcc English/Chinese mode
         elif keyval == self.__last_press_keyval \
                 and (keyval == keysyms.Shift_L or keyval == keysyms.Shift_R):
+            if self.settings.get_boolean("shift-select") and self.__prepinyin_string:
+                return self.do_process_key_event(keysyms._2, 0, 0)
+            if self.settings.get_string("shortcut-switch-mode") != "<Shift>":
+                return False
             self.do_property_activate("status", IBus.PropState.UNCHECKED)
             self.do_reset()
             return False
@@ -200,10 +231,17 @@ class Engine(ibus.Engine):
         else:
             return False
 
+        if not is_press:
+            return False
+        action = self.__shortcut_action(keyval, state)
+        if action:
+            self.do_property_activate(action)
+            return True
+        if state & (modifier.CONTROL_MASK | modifier.MOD1_MASK | modifier.SUPER_MASK):
+            return False
         if self.__is_input_english():
             if 32 <= keyval < 127 and self.__full_width_letter[self.__mode] :
-                c = chr(keyval)
-                c = _half_to_full(c)
+                c = _half_to_full(chr(keyval))
                 self.__commit_string(c)
                 return True
             return False
@@ -235,16 +273,18 @@ class Engine(ibus.Engine):
                 index = keyval - keysyms._1
                 if index >= self.__lookup_table.get_page_size():
                     return False
-                index += self.__lookup_table.get_current_page_start()
-                num = im_choose(int(index))
+                index += (self.__lookup_table.get_cursor_pos() // self.__lookup_table.get_page_size()) * self.__lookup_table.get_page_size()
+                if index >= self.__lookup_table.get_number_of_candidates():
+                    return True
+                num = self.decoder.choose(int(index))
                 self.__candidate_num = num
                 if num == 1:
-                    candidate = im_get_candidate(0)
+                    candidate = self.decoder.candidate(0)
                     if self.__trad_chinese[self.__mode]:
                         candidate = libopencc.convert(candidate)
                         pass
                     self.__commit_string(candidate)
-                    im_reset_search()
+                    self.decoder.reset()
                     if time.time() - self.__last_im_flush_cache_time > 300:
                         im_flush_cache()
                         self.__last_im_flush_cache_time = time.time()
@@ -253,11 +293,17 @@ class Engine(ibus.Engine):
                 self.__update()
                 return True
             # press , - Page_Up
-            elif keyval == keysyms.comma or keyval == keysyms.minus or keyval == keysyms.Page_Up or keyval == keysyms.KP_Page_Up:
+            elif (keyval in (keysyms.Page_Up, keysyms.KP_Page_Up) or
+                  keyval == keysyms.comma and self.settings.get_boolean('comma-period-page') or
+                  keyval == keysyms.minus and self.settings.get_boolean('minus-equal-page') or
+                  keyval == keysyms.bracketleft and self.settings.get_boolean('bracket-page')):
                 self.page_up()
                 return True
             # press . = Page_Down
-            elif keyval == keysyms.period or keyval == keysyms.equal or keyval == keysyms.Page_Down or keyval == keysyms.KP_Page_Down:
+            elif (keyval in (keysyms.Page_Down, keysyms.KP_Page_Down) or
+                  keyval == keysyms.period and self.settings.get_boolean('comma-period-page') or
+                  keyval == keysyms.equal and self.settings.get_boolean('minus-equal-page') or
+                  keyval == keysyms.bracketright and self.settings.get_boolean('bracket-page')):
                 self.page_down()
                 return True
             elif keyval == keysyms.Up:
@@ -269,16 +315,23 @@ class Engine(ibus.Engine):
             elif keyval == keysyms.Left or keyval == keysyms.Right:
                 return True
         if keyval in range(keysyms.a, keysyms.z + 1) or \
-                (keyval == keysyms.quoteright and self.__prepinyin_string):
+                (keyval == keysyms.quoteright and self.__prepinyin_string) or (
+                keyval == keysyms.semicolon and self.__prepinyin_string and
+                self.settings.get_boolean('double-pinyin') and
+                self.settings.get_int('double-pinyin-schema') in (1, 3)):
             if self.__lookup_table.get_number_of_candidates() \
                     and len(self.__lookup_table.get_candidate(0).text)\
                         >= MAX_SPELLINGS:
                 return True
             if state & (modifier.CONTROL_MASK | modifier.MOD1_MASK) == 0:
+                if len(self.__prepinyin_string) >= 64:
+                    return True
                 self.__prepinyin_string += chr(keyval)
                 self.__invalidate()
                 return True
         else:
+            if keyval > 0x10ffff:
+                return False
             c = chr(keyval)
             if c == "." and self.__prev_char and self.__prev_char.isdigit():
                 return False
@@ -311,7 +364,9 @@ class Engine(ibus.Engine):
             num = min(self.__candidate_num,
                     self.__lookup_candidate_num + self.__lookup_table.get_page_size() + 1)
             for i in range(self.__lookup_candidate_num, num):
-                text = im_get_candidate(i)
+                text = self.decoder.candidate(i)
+                if self.__is_trad_chinese() and globals().get("libopencc"):
+                    text = libopencc.convert(text)
                 self.__lookup_table.append_candidate(IBus.Text.new_from_string(text))
                 pass
             self.__lookup_candidate_num = num
@@ -321,33 +376,34 @@ class Engine(ibus.Engine):
 
     def page_up(self):
         if self.__lookup_table.page_up():
-            self.page_up_lookup_table()
+            self.__update_lookup_table()
             return True
         return False
 
     def page_down(self):
         self.__lookup_more_candidates()
         if self.__lookup_table.page_down():
-            self.page_down_lookup_table()
+            self.__update_lookup_table()
             return True
         return False
 
     def cursor_up(self):
         if self.__lookup_table.cursor_up():
-            self.cursor_up_lookup_table()
+            self.__update_lookup_table()
             return True
         return False
 
     def cursor_down(self):
         self.__lookup_more_candidates()
         if self.__lookup_table.cursor_down():
-            self.cursor_down_lookup_table()
+            self.__update_lookup_table()
             return True
         return False
 
     def __commit_string(self, text):
         self.commit_text(IBus.Text.new_from_string(text))
         self.__prepinyin_string = ""
+        self.decoder.reset()
         self.__prev_char = text and text[-1] or ''
         self.__update()
 
@@ -357,29 +413,42 @@ class Engine(ibus.Engine):
         self.__lookup_table.clean()
         if prepinyin_len > 0:
             #attrs.append(ibus.AttributeForeground(0x0000ff, 0, prepinyin_len))
-            num = im_search(self.__prepinyin_string.encode('utf8'))
+            num = self.decoder.search(self.__prepinyin_string)
             self.__candidate_num = num
             self.__lookup_candidate_num = min(num, self.__lookup_table.get_page_size() + 1)
             for i in range(self.__lookup_candidate_num):
-                text = im_get_candidate(i)
+                text = self.decoder.candidate(i)
+                if self.__is_trad_chinese() and globals().get("libopencc"):
+                    text = libopencc.convert(text)
                 self.__lookup_table.append_candidate(IBus.Text.new_from_string(text))
                 pass
             pass
         preedit_string = self.__lookup_table \
                 and self.__lookup_table.get_number_of_candidates() \
                 and self.__lookup_table.get_candidate(0).text or ""
+        spelling_text = self.__prepinyin_string
+        if (self.settings.get_boolean('double-pinyin') and
+                not self.settings.get_boolean('double-pinyin-show-raw')):
+            spelling_text = self.decoder.display_spelling
+        spelling_preedit = (self.settings.get_int('display-style') == 1 or
+                            self.settings.get_boolean('double-pinyin') and
+                            self.settings.get_boolean('double-pinyin-show-raw'))
+        if spelling_preedit:
+            preedit_string = spelling_text
         preedit_len = len(preedit_string)
-        preedit_pos = im_get_fixed_len()
+        preedit_pos = preedit_len if spelling_preedit else min(len(self.decoder.fixed), preedit_len)
 
-        self.update_auxiliary_text(IBus.Text.new_from_string(self.__prepinyin_string), prepinyin_len > 0)
+        self.update_auxiliary_text(IBus.Text.new_from_string(spelling_text), prepinyin_len > 0)
         attrs.append(IBus.Attribute.new(IBus.AttrType.UNDERLINE, Pango.Underline.SINGLE, 0, preedit_len))
-        if prepinyin_len > preedit_pos:
+        if not spelling_preedit and preedit_len > preedit_pos:
             attrs.append(IBus.Attribute.new(IBus.AttrType.BACKGROUND, 0xc8c8f0, preedit_pos, preedit_len))
         preedit = IBus.Text.new_from_string(preedit_string)
         preedit.set_attributes(attrs)
         self.update_preedit_text(preedit, preedit_pos, preedit_len > 0)
         self.__update_lookup_table()
         self.__is_invalidate = False
+        if prepinyin_len and self.__candidate_num == 1 and self.settings.get_boolean('auto-commit'):
+            self.do_process_key_event(keysyms.space, 0, 0)
 
     def __update_lookup_table(self):
         visible = self.__lookup_table.get_number_of_candidates() > 0
@@ -420,6 +489,16 @@ class Engine(ibus.Engine):
         return _half_to_full(c)
 
 
+    def do_candidate_clicked(self, index, button, state):
+        if button == 1 and index < self.__lookup_table.get_page_size():
+            self.do_process_key_event(keysyms._1 + index, 0, 0)
+
+    def do_page_up(self):
+        return self.page_up()
+
+    def do_page_down(self):
+        return self.page_down()
+
     def do_focus_in(self):
         self.do_reset()
         self.register_properties(self.__prop_list)
@@ -430,7 +509,7 @@ class Engine(ibus.Engine):
         pass
 
     def do_reset(self):
-        im_reset_search()
+        self.decoder.reset()
         self.__double_quotation_state = False
         self.__single_quotation_state = False
         self.__prepinyin_string = ""
@@ -440,17 +519,26 @@ class Engine(ibus.Engine):
         pass
 
     def do_property_activate(self, prop_name, prop_state=IBus.PropState.UNCHECKED):
-        #print "PropertyActivate(%s)" % prop_name
+        if prop_name == 'setup':
+            import subprocess
+            subprocess.Popen([sys.executable, path.join(IBUS_GOOGLEPINYIN_LOCATION, 'setup.py')])
+            return
+        if prop_name == 'all_width':
+            full = not self.__full_width_letter[self.__mode]
+            self.__full_width_letter[self.__mode] = full
+            self.__full_width_punct[self.__mode] = full
+            self.__refresh_properties()
+            return
         if prop_name == "status":
             self.__change_mode()
+            return
         elif prop_name == "full_letter":
-            self.__full_width_letter [self.__mode] = not self.__full_width_letter [self.__mode]
-            self.__refresh_properties()
+            self.__full_width_letter[self.__mode] = not self.__full_width_letter[self.__mode]
         elif prop_name == "full_punct":
-            self.__full_width_punct [self.__mode] = not self.__full_width_punct [self.__mode]
-            self.__refresh_properties()
-        elif prop_name == "_trad chinese":
-            self.__trad_chinese [self.__mode] = not self.__trad_chinese [self.__mode]
-            self.__refresh_properties()
+            self.__full_width_punct[self.__mode] = not self.__full_width_punct[self.__mode]
+        elif prop_name == "_trad chinese" and globals().get("libopencc"):
+            self.__trad_chinese[self.__mode] = not self.__trad_chinese[self.__mode]
+            self.__invalidate()
+        else:
+            return
         self.__refresh_properties()
-

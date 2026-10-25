@@ -18,10 +18,11 @@
 			<license>GPL</license>
 			<author>Jiahua Huang &lt;jhuangjiahua@gmail.com&gt;</author>
 			<icon>@IBUS_GOOGLEPINYIN_PKGDATADIR@/icons/ibus-googlepinyin.png</icon>
-			<layout>us</layout>
+			<layout>default</layout>
 			<longname>GooglePinyin</longname>
 			<description>GooglePinyin Input Method</description>
 			<rank>99</rank>
+			<setup>@CMAKE_INSTALL_FULL_LIBEXECDIR@/ibus-setup-googlepinyin</setup>
 		</engine>
 	</engines>
 </component>

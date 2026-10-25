@@ -189,7 +189,7 @@ def im_get_candidate(cand_id, max_len=1024):
     char16* im_get_candidate(size_t cand_id, char16* cand_str,
                              size_t max_len);
     '''
-    cand_str = ctypes.c_buffer(256)
+    cand_str = ctypes.create_string_buffer(max_len * 2)
     candidate = ime_pinyin.im_get_candidate(cand_id, cand_str, max_len)
     # ret = ctypes.c_char_p(candidate).value.decode('utf16').encode('utf8')
     return cand_str.raw.decode('utf16').split('\x00', 1)[0]
@@ -212,8 +212,7 @@ def im_get_spl_start_pos():
      */
     size_t im_get_spl_start_pos(const uint16 *&spl_start);
     '''
-    num = ime_pinyin.im_get_spl_start_pos(_spl_start)
-    return _spl_start.value
+    return spelling_boundaries()
     
 _cand_id = ctypes.c_size_t()
 
@@ -313,7 +312,7 @@ def im_enable_ym_as_szm(enable):
      */
     void im_enable_ym_as_szm(bool enable);
     '''
-    return ime_pinyin.im_enable_ym_as_szm(engine)
+    return ime_pinyin.im_enable_ym_as_szm(enable)
 
 if __name__=="__main__":
     if sys.argv[1:] and sys.argv[1].isalpha():
@@ -348,3 +347,25 @@ if __name__=="__main__":
             pass
         pass
     pass
+
+# Explicit ABI declarations: pointers must not be truncated on 64-bit hosts.
+ime_pinyin.im_open_decoder.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
+ime_pinyin.im_open_decoder.restype = ctypes.c_bool
+ime_pinyin.im_search.argtypes = [ctypes.c_char_p, ctypes.c_size_t]
+ime_pinyin.im_search.restype = ctypes.c_size_t
+ime_pinyin.im_get_candidate.argtypes = [ctypes.c_size_t, ctypes.c_void_p, ctypes.c_size_t]
+ime_pinyin.im_get_candidate.restype = ctypes.c_void_p
+ime_pinyin.im_choose.argtypes = [ctypes.c_size_t]
+ime_pinyin.im_choose.restype = ctypes.c_size_t
+ime_pinyin.im_get_fixed_len.restype = ctypes.c_size_t
+ime_pinyin.im_get_spl_start_pos.argtypes = [ctypes.POINTER(ctypes.POINTER(ctypes.c_uint16))]
+ime_pinyin.im_get_spl_start_pos.restype = ctypes.c_size_t
+ime_pinyin.im_enable_shm_as_szm.argtypes = [ctypes.c_bool]
+ime_pinyin.im_enable_ym_as_szm.argtypes = [ctypes.c_bool]
+
+
+def spelling_boundaries():
+    """Return all syllable boundaries of the current native search."""
+    positions = ctypes.POINTER(ctypes.c_uint16)()
+    count = ime_pinyin.im_get_spl_start_pos(ctypes.byref(positions))
+    return [positions[i] for i in range(count + 1)] if positions else []

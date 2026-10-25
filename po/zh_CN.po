@@ -1,0 +1,422 @@
+# zh_CN translation of ibus-googlepinyin.
+# Distributed under the same license as ibus-googlepinyin.
+msgid ""
+msgstr ""
+"Project-Id-Version: ibus-googlepinyin 0.42.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-25 17:43+0800\n"
+"PO-Revision-Date: 2026-10-25 17:00+0800\n"
+"Last-Translator: ibus-googlepinyin contributors\n"
+"Language-Team: zh_CN\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: setup.py:20 engine.py:109
+msgid "Preferences"
+msgstr "首选项"
+
+#: setup.py:36
+msgid "_Close"
+msgstr "关闭(_C)"
+
+#: setup.py:117
+msgid "General"
+msgstr "常规"
+
+#: setup.py:118
+msgid "Initial State"
+msgstr "初始状态"
+
+#: setup.py:120
+msgid "Language:"
+msgstr "语言："
+
+#: setup.py:120 engine.py:169
+msgid "Chinese"
+msgstr "中文"
+
+#: setup.py:120 engine.py:169
+msgid "English"
+msgstr "英文"
+
+#: setup.py:121
+msgid "Full/Half Width:"
+msgstr "全角/半角："
+
+#: setup.py:121 setup.py:122
+msgid "Full"
+msgstr "全角"
+
+#: setup.py:121 setup.py:122
+msgid "Half"
+msgstr "半角"
+
+#: setup.py:122
+msgid "Punctuation:"
+msgstr "标点符号："
+
+#: setup.py:129
+msgid "Chinese:"
+msgstr "中文："
+
+#: setup.py:129
+msgid "Simplified"
+msgstr "简体"
+
+#: setup.py:129
+msgid "Traditional"
+msgstr "繁体"
+
+#: setup.py:130
+msgid "Appearance"
+msgstr "外观"
+
+#: setup.py:133
+msgid "Display Style:"
+msgstr "显示风格："
+
+#: setup.py:133
+msgid "Default"
+msgstr "默认"
+
+#: setup.py:133
+msgid "Pinyin"
+msgstr "拼音"
+
+#: setup.py:134
+msgid "Candidate Word Orientation:"
+msgstr "候选词排列方向："
+
+#: setup.py:134
+msgid "Horizontal"
+msgstr "水平"
+
+#: setup.py:134
+msgid "Vertical"
+msgstr "垂直"
+
+#: setup.py:134
+msgid "System Default"
+msgstr "系统默认"
+
+#: setup.py:137
+msgid "Number of Candidates:"
+msgstr "每页显示候选词数："
+
+#: setup.py:147
+msgid "Candidates"
+msgstr "候选词"
+
+#: setup.py:149
+msgid "Sort Candidates by:"
+msgstr "候选词排列顺序："
+
+#: setup.py:150
+msgid "Frequency"
+msgstr "词频"
+
+#: setup.py:150
+msgid "Longest First"
+msgstr "长词优先"
+
+#: setup.py:150
+msgid "Shortest First"
+msgstr "短词优先"
+
+#: setup.py:153 setup.py:154
+msgid "Pinyin Mode"
+msgstr "拼音模式"
+
+#: setup.py:156
+msgid "Full Pinyin"
+msgstr "全拼"
+
+#: setup.py:157
+msgid "Double Pinyin"
+msgstr "双拼"
+
+#: setup.py:170
+msgid "Incomplete Pinyin"
+msgstr "简拼"
+
+#: setup.py:171
+msgid "Show Raw Double Pinyin"
+msgstr "显示双拼原始输入"
+
+#: setup.py:173
+msgid "Input Custom"
+msgstr "输入个性化"
+
+#: setup.py:176
+msgid "[Shift] Selects the Second Candidate"
+msgstr "[Shift] 键选次候选词"
+
+#: setup.py:177
+msgid "[-][=] Flip Page"
+msgstr "[-][=] 键翻页"
+
+#: setup.py:178
+msgid "[,][.] Flip Page"
+msgstr "[,][.] 键翻页"
+
+#: setup.py:179
+msgid "[ ][ ] Flip Page"
+msgstr "【】键翻页"
+
+#: setup.py:180
+msgid "Auto Commit"
+msgstr "自动上词"
+
+#: setup.py:182
+msgid "Pinyin Correction"
+msgstr "拼音纠错"
+
+#: setup.py:184
+msgid "Enable Pinyin Correction"
+msgstr "启用拼音纠错"
+
+#: setup.py:194
+msgid "Fuzzy Pinyin"
+msgstr "模糊音"
+
+#: setup.py:199
+msgid "Enable Fuzzy Pinyin"
+msgstr "启用模糊音"
+
+#: setup.py:206
+msgid "User Data"
+msgstr "用户数据"
+
+#: setup.py:208
+msgid "User Dictionary"
+msgstr "用户词典"
+
+#: setup.py:211
+msgid ""
+"Exit IBus before backing up or restoring the dictionary. The original file "
+"will be saved as .bak."
+msgstr "备份或恢复前请先退出 IBus。恢复时会保留原文件为 .bak。"
+
+#: setup.py:213
+msgid "Back Up User Dictionary…"
+msgstr "备份用户词典…"
+
+#: setup.py:213
+msgid "Restore User Dictionary…"
+msgstr "恢复用户词典…"
+
+#: setup.py:228
+msgid "Please exit IBus before backing up or restoring the user dictionary."
+msgstr "请先退出 IBus，再备份或恢复用户词典。"
+
+#: setup.py:231
+msgid "Back Up User Dictionary"
+msgstr "备份用户词典"
+
+#: setup.py:231
+msgid "Restore User Dictionary"
+msgstr "恢复用户词典"
+
+#: setup.py:234 setup.py:293
+msgid "_Cancel"
+msgstr "取消"
+
+#: setup.py:234 setup.py:293
+msgid "_OK"
+msgstr "确定"
+
+#: setup.py:246
+msgid "Operation completed. Restart IBus to apply the changes."
+msgstr "操作完成。重新启动 IBus 后生效。"
+
+#: setup.py:258
+msgid "Keyboard Shortcuts"
+msgstr "快捷键"
+
+#: setup.py:264
+msgid "Description"
+msgstr "描述"
+
+#: setup.py:264
+msgid "Shortcut"
+msgstr "快捷键"
+
+#: setup.py:273
+msgid "_Default"
+msgstr "默认值(_D)"
+
+#: setup.py:275
+msgid "_Edit"
+msgstr "编辑(_E)"
+
+#: setup.py:292
+msgid "Edit Shortcut"
+msgstr "编辑快捷键"
+
+#: setup.py:303
+msgid ""
+"Press a key combination, or enter <Control><Shift>f. Leave empty to disable."
+msgstr "按下组合键，或输入 <Control><Shift>f；留空禁用。"
+
+#: setup.py:324
+msgid "The shortcut is invalid or already assigned. Please choose another."
+msgstr "快捷键无效或与其他操作重复，请重新设置。"
+
+#: setup.py:333
+msgid "About"
+msgstr "关于"
+
+#: setup.py:339
+msgid "IBus Google Pinyin"
+msgstr "IBus Google 拼音"
+
+#: setup.py:341
+msgid "IBus Google Pinyin Input Method"
+msgstr "IBus Google 拼音输入法"
+
+#: setup.py:344
+msgid ""
+"Authors:\n"
+"Jiahua Huang\n"
+"Hillwood Yang"
+msgstr ""
+"作者：\n"
+"Jiahua Huang\n"
+"Hillwood Yang"
+
+#: setup.py:344
+msgid ""
+"Preferences layout based on:\n"
+"ibus-libpinyin\n"
+"Peng Huang, BYVoid, Peng Wu"
+msgstr ""
+"设置界面参考：\n"
+"ibus-libpinyin\n"
+"Peng Huang、BYVoid、Peng Wu"
+
+#: setup.py:345
+msgid "License: GPL-2.0-or-later"
+msgstr "许可证：GPL-2.0-or-later"
+
+#: engine.py:169
+msgid "CN"
+msgstr "中"
+
+#: engine.py:169
+msgid "EN"
+msgstr "英"
+
+#: engine.py:170
+msgid "Switch to English Mode"
+msgstr "切换到英文模式"
+
+#: engine.py:170
+msgid "Switch to Chinese Mode"
+msgstr "切换到中文模式"
+
+#: engine.py:173
+msgid "Full Width Letters"
+msgstr "全角字母"
+
+#: engine.py:173
+msgid "Half Width Letters"
+msgstr "半角字母"
+
+#: engine.py:174
+msgid "Switch to Half Width Letters"
+msgstr "切换到半角字母"
+
+#: engine.py:174
+msgid "Switch to Full Width Letters"
+msgstr "切换到全角字母"
+
+#: engine.py:177
+msgid "Full Width Punctuation"
+msgstr "全角标点"
+
+#: engine.py:177
+msgid "Half Width Punctuation"
+msgstr "半角标点"
+
+#: engine.py:178
+msgid "Switch to Half Width Punctuation"
+msgstr "切换到半角标点"
+
+#: engine.py:178
+msgid "Switch to Full Width Punctuation"
+msgstr "切换到全角标点"
+
+#: engine.py:183
+msgid "Traditional Chinese"
+msgstr "繁体中文"
+
+#: engine.py:183
+msgid "Simplified Chinese"
+msgstr "简体中文"
+
+#: engine.py:184
+msgid "Trad"
+msgstr "繁"
+
+#: engine.py:184
+msgid "Simp"
+msgstr "简"
+
+#: engine.py:185
+msgid "Switch to Simplified Chinese"
+msgstr "切换到简体中文"
+
+#: engine.py:185
+msgid "Switch to Traditional Chinese"
+msgstr "切换到繁体中文"
+
+#: settings.py:16
+msgid "Switch Chinese/English Mode"
+msgstr "切换中文/英文模式"
+
+#: settings.py:17
+msgid "Full/Half Width Letters"
+msgstr "全角/半角字母"
+
+#: settings.py:18
+msgid "Full/Half Width Punctuation"
+msgstr "全角/半角标点"
+
+#: settings.py:19
+msgid "Toggle All Full/Half Width"
+msgstr "全部切换全角/半角"
+
+#: settings.py:20
+msgid "Switch Traditional/Simplified Chinese"
+msgstr "切换繁体/简体中文模式"
+
+#: pinyin.py:9
+msgid "Natural Code"
+msgstr "自然码"
+
+#: pinyin.py:9
+msgid "Microsoft Pinyin"
+msgstr "微软拼音"
+
+#: pinyin.py:9
+msgid "Intelligent ABC"
+msgstr "智能ABC"
+
+#: pinyin.py:9
+msgid "Ziguang Pinyin"
+msgstr "紫光拼音"
+
+#: pinyin.py:9
+msgid "Pinyin Jiajia"
+msgstr "拼音加加"
+
+#: pinyin.py:9
+msgid "Xiaohe"
+msgstr "小鹤"
+
+#: data/ibus-setup-googlepinyin.desktop.in:3
+msgid "IBus Google Pinyin Preferences"
+msgstr "IBus Google 拼音首选项"

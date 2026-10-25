@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=IBus Google Pinyin Preferences
+Exec=@CMAKE_INSTALL_FULL_LIBEXECDIR@/ibus-setup-googlepinyin
+Icon=@IBUS_GOOGLEPINYIN_PKGDATADIR@/icons/ibus-googlepinyin.png
+NoDisplay=true
+Categories=Settings;
