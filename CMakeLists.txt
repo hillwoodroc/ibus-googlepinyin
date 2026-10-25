@@ -3,7 +3,7 @@ project(ibus-googlepinyin LANGUAGES NONE)
 
 set(IBUS_PREFIX /usr)
 set(IBUS_GOOGLEPINYIN_PKGDATADIR ${IBUS_PREFIX}/share/ibus-googlepinyin)
-set(IBUS_GOOGLEPINYIN_VERSION 0.1.99)
+set(IBUS_GOOGLEPINYIN_VERSION 0.2.0)
 
 configure_file(googlepinyin.xml.in ${CMAKE_CURRENT_BINARY_DIR}/googlepinyin.xml)
 
