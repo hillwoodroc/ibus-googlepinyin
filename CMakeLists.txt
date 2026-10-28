@@ -40,4 +40,3 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/googlepinyin.xml DESTINATION ${CMAKE_I
 install(FILES data/${SCHEMA} DESTINATION ${CMAKE_INSTALL_DATADIR}/glib-2.0/schemas)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ibus-setup-googlepinyin.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
 install(DIRECTORY icons/ DESTINATION ${CMAKE_INSTALL_DATADIR}/ibus-googlepinyin/icons)
-install(CODE "execute_process(COMMAND \"${GLIB_COMPILE_SCHEMAS}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_FULL_DATADIR}/glib-2.0/schemas\")")
