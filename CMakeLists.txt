@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(ibus-googlepinyin VERSION 0.42.0 LANGUAGES NONE)
+project(ibus-googlepinyin VERSION 0.43.0 LANGUAGES NONE)
 set(CMAKE_INSTALL_LIBDIR lib CACHE PATH "Library directory")
 include(GNUInstallDirs)
 set(IBUS_GOOGLEPINYIN_PKGDATADIR ${CMAKE_INSTALL_FULL_DATADIR}/ibus-googlepinyin)

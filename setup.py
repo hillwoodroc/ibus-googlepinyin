@@ -368,7 +368,7 @@ class Preferences(Gtk.Window):
         image = Gtk.Image.new_from_file(str(Path(__file__).parent / 'icons' / 'ibus-googlepinyin.png'))
         box.pack_start(image, False, False, 0)
         title = Gtk.Label()
-        title.set_markup('<span size="large" weight="bold">%s 0.2.0</span>' % GLib.markup_escape_text(_('IBus Google Pinyin')))
+        title.set_markup('<span size="large" weight="bold">%s 0.43.0</span>' % GLib.markup_escape_text(_('IBus Google Pinyin')))
         box.pack_start(title, False, False, 0)
         box.pack_start(Gtk.Label(label=_('IBus Google Pinyin Input Method')), False, False, 0)
         box.pack_start(Gtk.LinkButton(uri='https://github.com/hillwoodroc/ibus-googlepinyin',
