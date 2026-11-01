@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """Google Pinyin preferences using ibus-libpinyin's page layout.
 
 Copyright (c) 2026 ibus-googlepinyin contributors

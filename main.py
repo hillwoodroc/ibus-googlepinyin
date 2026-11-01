@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # vim:set et sts=4 sw=4:
 #
 # ibus-googlepinyin - The GooglePinyin engine for IBus
