@@ -371,8 +371,8 @@ class Preferences(Gtk.Window):
         title.set_markup('<span size="large" weight="bold">%s 0.43.0</span>' % GLib.markup_escape_text(_('IBus Google Pinyin')))
         box.pack_start(title, False, False, 0)
         box.pack_start(Gtk.Label(label=_('IBus Google Pinyin Input Method')), False, False, 0)
-        box.pack_start(Gtk.LinkButton(uri='https://github.com/hillwoodroc/ibus-googlepinyin',
-                                     label='https://github.com/hillwoodroc/ibus-googlepinyin'), False, False, 0)
+        box.pack_start(Gtk.LinkButton(uri='https://github.com/openSUSE/ibus-googlepinyin',
+                                     label='https://github.com/openSUSE/ibus-googlepinyin'), False, False, 0)
         for text in (_('Authors:\nJiahua Huang\nHillwood Yang'), _('Preferences layout based on:\nibus-libpinyin\nPeng Huang, BYVoid, Peng Wu'),
                      _('License: GPL-2.0-or-later')):
             label = Gtk.Label(label=text, justify=Gtk.Justification.CENTER)
