@@ -148,11 +148,6 @@ class Preferences(Gtk.Window):
         grid.attach(scale, 1, 2, 1, 1)
         self.controls['page-size'] = scale
 
-        grid = self.section(box, _('Candidates'))
-        grid.set_column_homogeneous(True)
-        grid.attach(Gtk.Label(label=_('Sort Candidates by:'), xalign=0), 0, 0, 1, 1)
-        grid.attach(self.combo('sort-order', [_('Frequency'), _('Longest First'), _('Shortest First')]), 1, 0, 1, 1)
-
     def pinyin(self):
         box = self.page(_('Pinyin Mode'))
         grid = self.section(box, _('Pinyin Mode'))

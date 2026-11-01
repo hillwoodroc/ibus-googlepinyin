@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ibus-googlepinyin 0.42.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 20:08+0800\n"
+"POT-Creation-Date: 2026-11-01 20:05+0800\n"
 "PO-Revision-Date: 2026-10-25 17:00+0800\n"
 "Last-Translator: ibus-googlepinyin contributors\n"
 "Language-Team: zh_TW\n"
@@ -106,210 +106,190 @@ msgstr "系統預設"
 msgid "Number of Candidates:"
 msgstr "每頁顯示候選詞數："
 
-#: setup.py:151
-msgid "Candidates"
-msgstr "候選詞"
-
-#: setup.py:153
-msgid "Sort Candidates by:"
-msgstr "候選詞排列順序："
-
-#: setup.py:154
-msgid "Frequency"
-msgstr "詞頻"
-
-#: setup.py:154
-msgid "Longest First"
-msgstr "長詞優先"
-
-#: setup.py:154
-msgid "Shortest First"
-msgstr "短詞優先"
-
-#: setup.py:157 setup.py:158
+#: setup.py:152 setup.py:153
 msgid "Pinyin Mode"
 msgstr "拼音模式"
 
-#: setup.py:160
+#: setup.py:155
 msgid "Full Pinyin"
 msgstr "全拼"
 
-#: setup.py:161
+#: setup.py:156
 msgid "Double Pinyin"
 msgstr "雙拼"
 
-#: setup.py:174
+#: setup.py:169
 msgid "Incomplete Pinyin"
 msgstr "簡拼"
 
-#: setup.py:175
+#: setup.py:170
 msgid "Show Raw Double Pinyin"
 msgstr "顯示雙拼原始輸入"
 
-#: setup.py:177
+#: setup.py:172
 msgid "Input Custom"
 msgstr "輸入個性化"
 
-#: setup.py:180
+#: setup.py:175
 msgid "[Shift] Selects the Second Candidate"
 msgstr "[Shift] 鍵選次候選詞"
 
-#: setup.py:181
+#: setup.py:176
 msgid "[-][=] Flip Page"
 msgstr "[-][=] 鍵翻頁"
 
-#: setup.py:182
+#: setup.py:177
 msgid "[,][.] Flip Page"
 msgstr "[,][.] 鍵翻頁"
 
-#: setup.py:183
+#: setup.py:178
 msgid "[ ][ ] Flip Page"
 msgstr "【】鍵翻頁"
 
-#: setup.py:184
+#: setup.py:179
 msgid "Auto Commit"
 msgstr "自動上詞"
 
-#: setup.py:186
+#: setup.py:181
 msgid "Pinyin Correction"
 msgstr "拼音糾錯"
 
-#: setup.py:188
+#: setup.py:183
 msgid "Enable Pinyin Correction"
 msgstr "啓用拼音糾錯"
 
-#: setup.py:198
+#: setup.py:193
 msgid "Fuzzy Pinyin"
 msgstr "模糊音"
 
-#: setup.py:203
+#: setup.py:198
 msgid "Enable Fuzzy Pinyin"
 msgstr "啓用模糊音"
 
-#: setup.py:210
+#: setup.py:205
 msgid "User Data"
 msgstr "使用者資料"
 
-#: setup.py:212
+#: setup.py:207
 msgid "User Dictionary"
 msgstr "使用者詞典"
 
-#: setup.py:215
+#: setup.py:210
 msgid ""
 "Exit IBus before backing up or restoring the dictionary. The original file "
 "will be saved as .bak."
 msgstr "備份或還原前請先退出 IBus。還原時會保留原文件爲 .bak。"
 
-#: setup.py:217
+#: setup.py:212
 msgid "Back Up User Dictionary…"
 msgstr "備份使用者詞典…"
 
-#: setup.py:217
+#: setup.py:212
 msgid "Restore User Dictionary…"
 msgstr "還原使用者詞典…"
 
-#: setup.py:232
+#: setup.py:227
 msgid "Please exit IBus before backing up or restoring the user dictionary."
 msgstr "請先退出 IBus，再備份或還原使用者詞典。"
 
-#: setup.py:235
+#: setup.py:230
 msgid "Back Up User Dictionary"
 msgstr "備份使用者詞典"
 
-#: setup.py:235
+#: setup.py:230
 msgid "Restore User Dictionary"
 msgstr "還原使用者詞典"
 
-#: setup.py:238 setup.py:297
+#: setup.py:233 setup.py:292
 msgid "_Cancel"
 msgstr "取消"
 
-#: setup.py:238 setup.py:297
+#: setup.py:233 setup.py:292
 msgid "_OK"
 msgstr "確定"
 
-#: setup.py:250
+#: setup.py:245
 msgid "Operation completed. Restart IBus to apply the changes."
 msgstr "操作完成。重新啓動 IBus 後生效。"
 
-#: setup.py:262
+#: setup.py:257
 msgid "Keyboard Shortcuts"
 msgstr "快速鍵"
 
-#: setup.py:268
+#: setup.py:263
 msgid "Description"
 msgstr "描述"
 
-#: setup.py:268
+#: setup.py:263
 msgid "Shortcut"
 msgstr "快速鍵"
 
-#: setup.py:277
+#: setup.py:272
 msgid "_Default"
 msgstr "預設值(_D)"
 
-#: setup.py:279
+#: setup.py:274
 msgid "_Edit"
 msgstr "編輯(_E)"
 
-#: setup.py:296
+#: setup.py:291
 msgid "Edit Shortcut"
 msgstr "編輯快速鍵"
 
-#: setup.py:307
+#: setup.py:302
 msgid ""
 "Press a key combination, or enter <Control><Shift>f. Leave empty to disable."
 msgstr "按下組合鍵，或輸入 <Control><Shift>f；留空禁用。"
 
-#: setup.py:328
+#: setup.py:323
 msgid "The shortcut is invalid or already assigned. Please choose another."
 msgstr "快速鍵無效或與其他操作重複，請重新設置。"
 
-#: setup.py:337
+#: setup.py:332
 msgid "Cloud Pinyin"
 msgstr "雲拼音"
 
-#: setup.py:338
+#: setup.py:333
 msgid "Cloud Input"
 msgstr "雲端輸入"
 
-#: setup.py:339
+#: setup.py:334
 msgid "Enable Cloud Input"
 msgstr "啟用雲拼音"
 
-#: setup.py:342
+#: setup.py:337
 msgid "When enabled, pinyin is sent to the selected Google service."
 msgstr "啟用後，拼音會傳送至選定的 Google 服務。"
 
-#: setup.py:345
+#: setup.py:340
 msgid "Input Source:"
 msgstr "輸入來源："
 
-#: setup.py:354
+#: setup.py:349
 msgid "Cloud Candidates:"
 msgstr "雲端候選詞數："
 
-#: setup.py:355
+#: setup.py:350
 msgid "Request Delay (ms):"
 msgstr "請求延遲（毫秒）："
 
-#: setup.py:367
+#: setup.py:362
 msgid "Cloud input requires libsoup 3 and its GObject introspection typelib."
 msgstr "雲拼音需要 libsoup 3 及其 GObject introspection 型別庫。"
 
-#: setup.py:370
+#: setup.py:365
 msgid "About"
 msgstr "關於"
 
-#: setup.py:376
+#: setup.py:371
 msgid "IBus Google Pinyin"
 msgstr "IBus Google 拼音"
 
-#: setup.py:378
+#: setup.py:373
 msgid "IBus Google Pinyin Input Method"
 msgstr "IBus Google 拼音輸入法"
 
-#: setup.py:381
+#: setup.py:376
 msgid ""
 "Authors:\n"
 "Jiahua Huang\n"
@@ -319,7 +299,7 @@ msgstr ""
 "Jiahua Huang\n"
 "Hillwood Yang"
 
-#: setup.py:381
+#: setup.py:376
 msgid ""
 "Preferences layout based on:\n"
 "ibus-libpinyin\n"
@@ -329,7 +309,7 @@ msgstr ""
 "ibus-libpinyin\n"
 "Peng Huang、BYVoid、Peng Wu"
 
-#: setup.py:382
+#: setup.py:377
 msgid "License: GPL-2.0-or-later"
 msgstr "許可證：GPL-2.0-or-later"
 

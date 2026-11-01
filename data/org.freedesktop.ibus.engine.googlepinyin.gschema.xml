@@ -40,11 +40,6 @@
       <default>true</default>
       <summary>Remember new words</summary>
     </key>
-    <key name="sort-order" type="i">
-      <range min="0" max="2" />
-      <default>0</default>
-      <summary>Sort order</summary>
-    </key>
     <key name="keyboard-layout" type="s">
       <default>'default'</default>
       <summary>Keyboard layout</summary>

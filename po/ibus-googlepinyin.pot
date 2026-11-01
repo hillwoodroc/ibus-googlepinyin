@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ibus-googlepinyin 0.42.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 20:08+0800\n"
+"POT-Creation-Date: 2026-11-01 20:05+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -109,224 +109,204 @@ msgstr ""
 msgid "Number of Candidates:"
 msgstr ""
 
-#: setup.py:151
-msgid "Candidates"
-msgstr ""
-
-#: setup.py:153
-msgid "Sort Candidates by:"
-msgstr ""
-
-#: setup.py:154
-msgid "Frequency"
-msgstr ""
-
-#: setup.py:154
-msgid "Longest First"
-msgstr ""
-
-#: setup.py:154
-msgid "Shortest First"
-msgstr ""
-
-#: setup.py:157 setup.py:158
+#: setup.py:152 setup.py:153
 msgid "Pinyin Mode"
 msgstr ""
 
-#: setup.py:160
+#: setup.py:155
 msgid "Full Pinyin"
 msgstr ""
 
-#: setup.py:161
+#: setup.py:156
 msgid "Double Pinyin"
 msgstr ""
 
-#: setup.py:174
+#: setup.py:169
 msgid "Incomplete Pinyin"
 msgstr ""
 
-#: setup.py:175
+#: setup.py:170
 msgid "Show Raw Double Pinyin"
 msgstr ""
 
-#: setup.py:177
+#: setup.py:172
 msgid "Input Custom"
 msgstr ""
 
-#: setup.py:180
+#: setup.py:175
 msgid "[Shift] Selects the Second Candidate"
 msgstr ""
 
-#: setup.py:181
+#: setup.py:176
 msgid "[-][=] Flip Page"
 msgstr ""
 
-#: setup.py:182
+#: setup.py:177
 msgid "[,][.] Flip Page"
 msgstr ""
 
-#: setup.py:183
+#: setup.py:178
 msgid "[ ][ ] Flip Page"
 msgstr ""
 
-#: setup.py:184
+#: setup.py:179
 msgid "Auto Commit"
 msgstr ""
 
-#: setup.py:186
+#: setup.py:181
 msgid "Pinyin Correction"
 msgstr ""
 
-#: setup.py:188
+#: setup.py:183
 msgid "Enable Pinyin Correction"
 msgstr ""
 
-#: setup.py:198
+#: setup.py:193
 msgid "Fuzzy Pinyin"
 msgstr ""
 
-#: setup.py:203
+#: setup.py:198
 msgid "Enable Fuzzy Pinyin"
 msgstr ""
 
-#: setup.py:210
+#: setup.py:205
 msgid "User Data"
 msgstr ""
 
-#: setup.py:212
+#: setup.py:207
 msgid "User Dictionary"
 msgstr ""
 
-#: setup.py:215
+#: setup.py:210
 msgid ""
 "Exit IBus before backing up or restoring the dictionary. The original file "
 "will be saved as .bak."
 msgstr ""
 
-#: setup.py:217
+#: setup.py:212
 msgid "Back Up User Dictionary…"
 msgstr ""
 
-#: setup.py:217
+#: setup.py:212
 msgid "Restore User Dictionary…"
 msgstr ""
 
-#: setup.py:232
+#: setup.py:227
 msgid "Please exit IBus before backing up or restoring the user dictionary."
 msgstr ""
 
-#: setup.py:235
+#: setup.py:230
 msgid "Back Up User Dictionary"
 msgstr ""
 
-#: setup.py:235
+#: setup.py:230
 msgid "Restore User Dictionary"
 msgstr ""
 
-#: setup.py:238 setup.py:297
+#: setup.py:233 setup.py:292
 msgid "_Cancel"
 msgstr ""
 
-#: setup.py:238 setup.py:297
+#: setup.py:233 setup.py:292
 msgid "_OK"
 msgstr ""
 
-#: setup.py:250
+#: setup.py:245
 msgid "Operation completed. Restart IBus to apply the changes."
 msgstr ""
 
-#: setup.py:262
+#: setup.py:257
 msgid "Keyboard Shortcuts"
 msgstr ""
 
-#: setup.py:268
+#: setup.py:263
 msgid "Description"
 msgstr ""
 
-#: setup.py:268
+#: setup.py:263
 msgid "Shortcut"
 msgstr ""
 
-#: setup.py:277
+#: setup.py:272
 msgid "_Default"
 msgstr ""
 
-#: setup.py:279
+#: setup.py:274
 msgid "_Edit"
 msgstr ""
 
-#: setup.py:296
+#: setup.py:291
 msgid "Edit Shortcut"
 msgstr ""
 
-#: setup.py:307
+#: setup.py:302
 msgid ""
 "Press a key combination, or enter <Control><Shift>f. Leave empty to disable."
 msgstr ""
 
-#: setup.py:328
+#: setup.py:323
 msgid "The shortcut is invalid or already assigned. Please choose another."
 msgstr ""
 
-#: setup.py:337
+#: setup.py:332
 msgid "Cloud Pinyin"
 msgstr ""
 
-#: setup.py:338
+#: setup.py:333
 msgid "Cloud Input"
 msgstr ""
 
-#: setup.py:339
+#: setup.py:334
 msgid "Enable Cloud Input"
 msgstr ""
 
-#: setup.py:342
+#: setup.py:337
 msgid "When enabled, pinyin is sent to the selected Google service."
 msgstr ""
 
-#: setup.py:345
+#: setup.py:340
 msgid "Input Source:"
 msgstr ""
 
-#: setup.py:354
+#: setup.py:349
 msgid "Cloud Candidates:"
 msgstr ""
 
-#: setup.py:355
+#: setup.py:350
 msgid "Request Delay (ms):"
 msgstr ""
 
-#: setup.py:367
+#: setup.py:362
 msgid "Cloud input requires libsoup 3 and its GObject introspection typelib."
 msgstr ""
 
-#: setup.py:370
+#: setup.py:365
 msgid "About"
 msgstr ""
 
-#: setup.py:376
+#: setup.py:371
 msgid "IBus Google Pinyin"
 msgstr ""
 
-#: setup.py:378
+#: setup.py:373
 msgid "IBus Google Pinyin Input Method"
 msgstr ""
 
-#: setup.py:381
+#: setup.py:376
 msgid ""
 "Authors:\n"
 "Jiahua Huang\n"
 "Hillwood Yang"
 msgstr ""
 
-#: setup.py:381
+#: setup.py:376
 msgid ""
 "Preferences layout based on:\n"
 "ibus-libpinyin\n"
 "Peng Huang, BYVoid, Peng Wu"
 msgstr ""
 
-#: setup.py:382
+#: setup.py:377
 msgid "License: GPL-2.0-or-later"
 msgstr ""
 

@@ -80,12 +80,6 @@ class Decoder:
                     seen.add(text)
                     self.candidates.append(text)
                     self.choices.append((spelling, index))
-        order = self.get('sort-order')
-        if order:
-            entries = sorted(zip(self.candidates, self.choices),
-                             key=lambda item: len(item[0]), reverse=order == 1)
-            self.candidates = [item[0] for item in entries]
-            self.choices = [item[1] for item in entries]
         if self.choices:
             self.display_spelling = self.choices[0][0]
         return len(self.candidates)
