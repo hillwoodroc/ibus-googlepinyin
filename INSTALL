@@ -9,3 +9,6 @@ Open preferences with /usr/libexec/ibus-setup-googlepinyin (or the configured
 CMAKE_INSTALL_LIBEXECDIR). RPM builds may pass
 -DCMAKE_INSTALL_LIBEXECDIR:PATH=%{_libexecdir}. See README.md for features,
 backend limitations and tests.
+
+Cloud Pinyin additionally requires libsoup 3 GObject introspection
+(e.g. gir1.2-soup-3.0). Without it, offline input remains available.

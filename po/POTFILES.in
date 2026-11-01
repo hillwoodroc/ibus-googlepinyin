@@ -2,3 +2,4 @@ setup.py
 engine.py
 settings.py
 pinyin.py
+cloudpinyin.py

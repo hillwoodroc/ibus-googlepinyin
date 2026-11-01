@@ -13,18 +13,20 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gio, GLib, Gtk
 from settings import new_settings, CORRECTIONS, FUZZY, SHORTCUTS
 from pinyin import SCHEME_NAMES
+from cloudpinyin import AVAILABLE as CLOUD_AVAILABLE, SOURCE_NAMES
 
 
 class Preferences(Gtk.Window):
     def __init__(self):
         super().__init__(title=_('Preferences'))
         self.settings = new_settings()
-        self.set_default_size(820, 820)
+        self.set_default_size(620, 710)
         self._handlers = []
         self.connect('destroy', self.closed)
         outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin=12)
         self.add(outer)
         self.notebook = Gtk.Notebook()
+        self.notebook.set_scrollable(True)
         outer.pack_start(self.notebook, True, True, 0)
         self.controls = {}
         self.general()
@@ -32,6 +34,7 @@ class Preferences(Gtk.Window):
         self.fuzzy()
         self.user_data()
         self.shortcuts()
+        self.cloud_input()
         self.about()
         close = Gtk.Button.new_with_mnemonic(_('_Close'))
         close.set_halign(Gtk.Align.END)
@@ -144,6 +147,7 @@ class Preferences(Gtk.Window):
         scale.set_hexpand(True)
         grid.attach(scale, 1, 2, 1, 1)
         self.controls['page-size'] = scale
+
         grid = self.section(box, _('Candidates'))
         grid.set_column_homogeneous(True)
         grid.attach(Gtk.Label(label=_('Sort Candidates by:'), xalign=0), 0, 0, 1, 1)
@@ -328,6 +332,39 @@ class Preferences(Gtk.Window):
         for key, _label, _default in SHORTCUTS:
             self.settings.reset('shortcut-' + key)
         self.refresh_shortcuts()
+
+    def cloud_input(self):
+        box = self.page(_('Cloud Pinyin'))
+        grid = self.section(box, _('Cloud Input'))
+        toggle = self.check('enable-cloud-input', _('Enable Cloud Input'))
+        toggle.set_sensitive(CLOUD_AVAILABLE)
+        grid.attach(toggle, 0, 0, 2, 1)
+        label = Gtk.Label(label=_('When enabled, pinyin is sent to the selected Google service.'),
+                          xalign=0, wrap=True)
+        grid.attach(label, 0, 1, 2, 1)
+        grid.attach(Gtk.Label(label=_('Input Source:'), xalign=0), 0, 2, 1, 1)
+        source = self.combo('cloud-input-source', SOURCE_NAMES)
+        grid.attach(source, 1, 2, 1, 1)
+        def sensitivity(*_args):
+            source.set_sensitive(CLOUD_AVAILABLE and toggle.get_active())
+            for widget in spins:
+                widget.set_sensitive(CLOUD_AVAILABLE and toggle.get_active())
+        spins = []
+        for row, key, title, lower, upper, step in (
+                (3, 'cloud-candidates-number', _('Cloud Candidates:'), 1, 9, 1),
+                (4, 'cloud-request-delay-time', _('Request Delay (ms):'), 200, 2000, 100)):
+            grid.attach(Gtk.Label(label=title, xalign=0), 0, row, 1, 1)
+            spin = Gtk.SpinButton.new_with_range(lower, upper, step)
+            spin.set_value(self.settings.get_int(key))
+            spin.connect('value-changed', lambda w, k=key: self.settings.set_int(k, w.get_value_as_int()))
+            self.watch('changed::' + key, lambda settings, k, w=spin: w.set_value(settings.get_int(k)))
+            self.controls[key] = spin
+            spins.append(spin)
+            grid.attach(spin, 1, row, 1, 1)
+        toggle.connect('toggled', sensitivity)
+        sensitivity()
+        if not CLOUD_AVAILABLE:
+            self.label(box, _('Cloud input requires libsoup 3 and its GObject introspection typelib.'))
 
     def about(self):
         box = self.page(_('About'))

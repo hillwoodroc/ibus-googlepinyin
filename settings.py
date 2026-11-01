@@ -27,6 +27,8 @@ DEFAULTS = {
     'shift-select': False, 'minus-equal-page': True, 'comma-period-page': False,
     'bracket-page': False, 'auto-commit': False, 'correct-pinyin': True,
     'fuzzy-pinyin': False,
+    'enable-cloud-input': False, 'cloud-input-source': 0,
+    'cloud-candidates-number': 1, 'cloud-request-delay-time': 600,
 }
 DEFAULTS.update({'correct-pinyin-' + key: True for key, _ in CORRECTIONS})
 DEFAULTS.update({'fuzzy-pinyin-' + key: key not in ('l-r', 'g-k') for key, _ in FUZZY})

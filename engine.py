@@ -31,6 +31,7 @@ gi.require_version('Pango', '1.0')
 from gi.repository import Gdk, GLib, Gtk, IBus, Pango
 from settings import new_settings, SHORTCUTS
 from decoder import Decoder
+from cloudpinyin import CloudInput, AVAILABLE as CLOUD_AVAILABLE
 
 ibus = IBus
 pango = Pango
@@ -77,6 +78,13 @@ class Engine(ibus.Engine):
         im_open_decoder()
         self.settings = new_settings()
         self.decoder = Decoder(lambda key: self.settings.get_value(key).unpack())
+        self.__destroyed = False
+        self.__cloud = CloudInput()
+        self.__cloud_context = None
+        self.__cloud_results = []
+        self.__cloud_shown_at = 0
+        self.__cloud_frozen = False
+        self.__candidate_rows = []
         self.__is_invalidate = False
         self.__prepinyin_string = ""
         self.__lookup_table = ibus.LookupTable()
@@ -119,6 +127,11 @@ class Engine(ibus.Engine):
 
     def __settings_changed(self, settings, key):
         self.__apply_appearance()
+        if key.startswith('cloud-') or key == 'enable-cloud-input':
+            self.__clear_cloud()
+            self.__cloud_frozen = False
+            self.__invalidate()
+            return
         if key == 'initial-chinese':
             self.__mode = int(settings.get_boolean(key))
         elif key == 'initial-full-width':
@@ -134,6 +147,8 @@ class Engine(ibus.Engine):
         self.__refresh_properties()
 
     def do_destroy(self):
+        self.__destroyed = True
+        self.__cloud.close()
         self.settings.disconnect(self.__settings_handler)
         im_flush_cache()
         IBus.Engine.do_destroy(self)
@@ -276,7 +291,18 @@ class Engine(ibus.Engine):
                 index += (self.__lookup_table.get_cursor_pos() // self.__lookup_table.get_page_size()) * self.__lookup_table.get_page_size()
                 if index >= self.__lookup_table.get_number_of_candidates():
                     return True
-                num = self.decoder.choose(int(index))
+                kind, native_index, text = self.__candidate_rows[index]
+                if kind == 'cloud':
+                    # Match upstream's grace period to avoid selecting a newly
+                    # inserted candidate with a key that was already in flight.
+                    if time.monotonic() - self.__cloud_shown_at < 0.1:
+                        return True
+                    if self.__is_trad_chinese():
+                        text = libopencc.convert(text)
+                    self.__commit_string(text)
+                    return True
+                self.__clear_cloud()
+                num = self.decoder.choose(native_index)
                 self.__candidate_num = num
                 if num == 1:
                     candidate = self.decoder.candidate(0)
@@ -353,34 +379,69 @@ class Engine(ibus.Engine):
         return False
 
     def __invalidate(self):
-        if self.__is_invalidate:
+        if self.__destroyed or self.__is_invalidate:
             return
         self.__is_invalidate = True
         gobject.idle_add(self.__update, priority=GLib.PRIORITY_LOW)
 
 
+    def __clear_cloud(self):
+        self.__cloud.cancel()
+        self.__cloud_context = None
+        self.__cloud_results = []
+
+    def __sync_cloud(self):
+        if (not CLOUD_AVAILABLE or not self.settings.get_boolean('enable-cloud-input')
+                or self.__mode != 1 or not self.__prepinyin_string or self.decoder.fixed
+                or not self.decoder.candidates or len(self.decoder.candidate(0)) < 2):
+            self.__clear_cloud()
+            return
+        context = (self.__prepinyin_string, self.decoder.display_spelling,
+                   self.settings.get_int('cloud-input-source'),
+                   self.settings.get_int('cloud-candidates-number'))
+        if context == self.__cloud_context:
+            return
+        self.__clear_cloud()
+        self.__cloud_context = context
+        self.__cloud_frozen = False
+        def completed(candidates):
+            if (self.__destroyed or context is not self.__cloud_context
+                    or context[0] != self.__prepinyin_string or self.__mode != 1
+                    or not self.settings.get_boolean('enable-cloud-input')
+                    or self.decoder.fixed or self.__cloud_frozen):
+                return
+            self.__cloud_results = candidates
+            self.__cloud_shown_at = time.monotonic()
+            self.__update()
+        self.__cloud.query(context[1], context[2], context[3],
+                           self.settings.get_int('cloud-request-delay-time'), completed)
+
+    def __append_row(self, index):
+        kind, native_index, text = self.__candidate_rows[index]
+        if self.__is_trad_chinese() and globals().get('libopencc'):
+            text = libopencc.convert(text)
+        if kind == 'cloud':
+            text = '☁ ' + text
+        self.__lookup_table.append_candidate(IBus.Text.new_from_string(text))
+
     def __lookup_more_candidates(self):
         if self.__lookup_candidate_num < self.__candidate_num:
             num = min(self.__candidate_num,
-                    self.__lookup_candidate_num + self.__lookup_table.get_page_size() + 1)
+                      self.__lookup_candidate_num + self.__lookup_table.get_page_size() + 1)
             for i in range(self.__lookup_candidate_num, num):
-                text = self.decoder.candidate(i)
-                if self.__is_trad_chinese() and globals().get("libopencc"):
-                    text = libopencc.convert(text)
-                self.__lookup_table.append_candidate(IBus.Text.new_from_string(text))
-                pass
+                self.__append_row(i)
             self.__lookup_candidate_num = num
             self.__update_lookup_table()
-            pass
-        pass
 
     def page_up(self):
+        self.__cloud_frozen = True
         if self.__lookup_table.page_up():
             self.__update_lookup_table()
             return True
         return False
 
     def page_down(self):
+        self.__cloud_frozen = True
         self.__lookup_more_candidates()
         if self.__lookup_table.page_down():
             self.__update_lookup_table()
@@ -388,12 +449,14 @@ class Engine(ibus.Engine):
         return False
 
     def cursor_up(self):
+        self.__cloud_frozen = True
         if self.__lookup_table.cursor_up():
             self.__update_lookup_table()
             return True
         return False
 
     def cursor_down(self):
+        self.__cloud_frozen = True
         self.__lookup_more_candidates()
         if self.__lookup_table.cursor_down():
             self.__update_lookup_table()
@@ -401,6 +464,7 @@ class Engine(ibus.Engine):
         return False
 
     def __commit_string(self, text):
+        self.__clear_cloud()
         self.commit_text(IBus.Text.new_from_string(text))
         self.__prepinyin_string = ""
         self.decoder.reset()
@@ -408,21 +472,26 @@ class Engine(ibus.Engine):
         self.__update()
 
     def __update(self):
+        if self.__destroyed:
+            return GLib.SOURCE_REMOVE
         prepinyin_len = len(self.__prepinyin_string)
         attrs = ibus.AttrList()
         self.__lookup_table.clean()
         if prepinyin_len > 0:
-            #attrs.append(ibus.AttributeForeground(0x0000ff, 0, prepinyin_len))
-            num = self.decoder.search(self.__prepinyin_string)
-            self.__candidate_num = num
-            self.__lookup_candidate_num = min(num, self.__lookup_table.get_page_size() + 1)
-            for i in range(self.__lookup_candidate_num):
-                text = self.decoder.candidate(i)
-                if self.__is_trad_chinese() and globals().get("libopencc"):
-                    text = libopencc.convert(text)
-                self.__lookup_table.append_candidate(IBus.Text.new_from_string(text))
-                pass
-            pass
+            self.decoder.search(self.__prepinyin_string)
+        self.__sync_cloud()
+        self.__candidate_rows = [('local', i, text) for i, text in enumerate(self.decoder.candidates)] if prepinyin_len else []
+        existing = {row[2] for row in self.__candidate_rows}
+        cloud_rows = []
+        for text in self.__cloud_results:
+            if text not in existing:
+                cloud_rows.append(('cloud', None, text))
+                existing.add(text)
+        self.__candidate_rows[1:1] = cloud_rows
+        self.__candidate_num = len(self.__candidate_rows)
+        self.__lookup_candidate_num = min(self.__candidate_num, self.__lookup_table.get_page_size() + 1)
+        for i in range(self.__lookup_candidate_num):
+            self.__append_row(i)
         preedit_string = self.__lookup_table \
                 and self.__lookup_table.get_number_of_candidates() \
                 and self.__lookup_table.get_candidate(0).text or ""
@@ -509,6 +578,9 @@ class Engine(ibus.Engine):
         pass
 
     def do_reset(self):
+        self.__clear_cloud()
+        self.__cloud_frozen = False
+        self.__candidate_rows = []
         self.decoder.reset()
         self.__double_quotation_state = False
         self.__single_quotation_state = False
