@@ -19,6 +19,7 @@
 			<author>Jiahua Huang &lt;jhuangjiahua@gmail.com&gt;</author>
 			<icon>@IBUS_GOOGLEPINYIN_PKGDATADIR@/icons/ibus-googlepinyin.png</icon>
 			<layout>default</layout>
+			<symbol>拼</symbol>
 			<longname>GooglePinyin</longname>
 			<description>GooglePinyin Input Method</description>
 			<rank>99</rank>
