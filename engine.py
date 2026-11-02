@@ -102,7 +102,7 @@ class Engine(ibus.Engine):
 
         # init properties
         self.__prop_list = ibus.PropList()
-        self.__status_property = self.__new_property("status")
+        self.__status_property = self.__new_property("InputMode")
         self.__prop_list.append(self.__status_property)
         self.__letter_property = self.__new_property("full_letter")
         self.__prop_list.append(self.__letter_property)
@@ -163,7 +163,7 @@ class Engine(ibus.Engine):
             ok = bool(expected_key)
             mask = modifier.CONTROL_MASK | modifier.SHIFT_MASK | modifier.MOD1_MASK | modifier.SUPER_MASK
             if ok and Gdk.keyval_to_lower(keyval) == Gdk.keyval_to_lower(expected_key) and state & mask == expected_mods & mask:
-                return {'switch-mode': 'status', 'full-width': 'full_letter',
+                return {'switch-mode': 'InputMode', 'full-width': 'full_letter',
                         'punctuation': 'full_punct', 'traditional': '_trad chinese',
                         'all-width': 'all_width'}[name]
         return None
@@ -184,7 +184,7 @@ class Engine(ibus.Engine):
         traditional = self.__trad_chinese[self.__mode]
         items = [
             (self.__status_property,
-             _('Chinese') if chinese else _('English'), _('CN') if chinese else _('EN'),
+             _('Chinese') if chinese else _('English'), '中' if chinese else '英',
              _('Switch to English Mode') if chinese else _('Switch to Chinese Mode'),
              'chinese.svg' if chinese else 'english.svg'),
             (self.__letter_property,
@@ -239,7 +239,7 @@ class Engine(ibus.Engine):
                 return self.do_process_key_event(keysyms._2, 0, 0)
             if self.settings.get_string("shortcut-switch-mode") != "<Shift>":
                 return False
-            self.do_property_activate("status", IBus.PropState.UNCHECKED)
+            self.do_property_activate("InputMode", IBus.PropState.UNCHECKED)
             self.do_reset()
             return False
         ## ignore key release events
@@ -601,7 +601,7 @@ class Engine(ibus.Engine):
             self.__full_width_punct[self.__mode] = full
             self.__refresh_properties()
             return
-        if prop_name == "status":
+        if prop_name in ("InputMode", "status"):
             self.__change_mode()
             return
         elif prop_name == "full_letter":
