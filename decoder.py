@@ -91,6 +91,15 @@ class Decoder:
             native.im_reset_search()
             native.im_search(spelling)
         count = native.im_choose(native_index)
+        if count > 1:
+            # libgooglepinyin 0.1.2 can change the remaining segmentation in
+            # choose() without refreshing its spelling IDs/boundaries. Its
+            # returned candidates then refer to the old segmentation, and a
+            # second choose() can abort in MatrixSearch::reset_search().
+            # Refresh boundaries AND rebuild candidates using an incremental
+            # search; do not reset, since that would discard the fixed prefix.
+            native.spelling_boundaries()
+            count = native.im_search(self.display_spelling)
         self.candidates = [native.im_get_candidate(i) for i in range(count)]
         self.choices = [(None, i) for i in range(count)]
         self.fixed = native.im_get_candidate(0)[:native.im_get_fixed_len()] if count else ''
